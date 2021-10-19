@@ -49,7 +49,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                           widget.orderItem.productsOrder.length > 1
                               ? '${widget.orderItem.productsOrder.length} items'
                               : '${widget.orderItem.productsOrder.length} item',
-                          style: Theme.of(context).textTheme.display2,
+                          style: Theme.of(context).textTheme.headline3,
                         ),
                       ],
                     ),
@@ -64,7 +64,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                 children: [
                   Text(
                     'ID Order',
-                    style: Theme.of(context).textTheme.display2,
+                    style: Theme.of(context).textTheme.headline3,
                   ),
                   Text(widget.orderItem.id.substring(14)),
                 ],
@@ -77,7 +77,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                 children: [
                   Text(
                     'Date Order',
-                    style: Theme.of(context).textTheme.display2,
+                    style: Theme.of(context).textTheme.headline3,
                   ),
                   Text(DateFormat.yMMMd().format(widget.orderItem.dateTime)),
                 ],
@@ -90,7 +90,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                 children: [
                   Text(
                     'Total Product',
-                    style: Theme.of(context).textTheme.display2,
+                    style: Theme.of(context).textTheme.headline3,
                   ),
                   Text('\$${widget.orderItem.amount.toStringAsFixed(2)}'),
                 ],
@@ -133,11 +133,11 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                             children: [
                               Text(
                                 e.title,
-                                style: Theme.of(context).textTheme.display2,
+                                style: Theme.of(context).textTheme.headline3,
                               ),
                               Text(
                                 '\$${e.price}' + ' x ' + '${e.quantily}',
-                                style: Theme.of(context).textTheme.display2,
+                                style: Theme.of(context).textTheme.headline3,
                               ),
                             ],
                           ),

@@ -45,11 +45,13 @@ class CartItemWidget extends StatelessWidget {
                   content:
                       Text('Do you want to remove the item from the cart?'),
                   actions: [
+                    // ignore: deprecated_member_use
                     FlatButton(
                         onPressed: () {
                           Navigator.of(context).pop(false);
                         },
                         child: const Text('No')),
+                    // ignore: deprecated_member_use
                     FlatButton(
                         onPressed: () {
                           Navigator.of(context).pop(true);
@@ -117,21 +119,21 @@ class CartItemWidget extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: Theme.of(context).textTheme.body1,
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                       SizedBox(
                         height: 15.0,
                       ),
                       Text(
-                        '\$${price}',
-                        style: Theme.of(context).textTheme.subtitle,
+                        '\$$price',
+                        style: Theme.of(context).textTheme.subtitle2,
                       ),
                     ],
                   ),
                 ),
                 Text(
-                  'x ${quanlity}',
-                  style: Theme.of(context).textTheme.subtitle,
+                  'x $quanlity',
+                  style: Theme.of(context).textTheme.subtitle2,
                 )
               ],
             ),

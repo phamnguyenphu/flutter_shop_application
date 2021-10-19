@@ -15,7 +15,7 @@ class CartScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Your Cart',
-          style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
       ),
       body: Column(
@@ -56,11 +56,11 @@ class CartScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Total',
-                          style: Theme.of(context).textTheme.display1,
+                          style: Theme.of(context).textTheme.headline4,
                         ),
                         Text(
                           '\$ ${cart.totalAmount.toStringAsFixed(2)}',
-                          style: Theme.of(context).textTheme.body1,
+                          style: Theme.of(context).textTheme.bodyText1,
                         ),
                       ],
                     ),
@@ -98,6 +98,7 @@ class _OrderButtonState extends State<OrderButton> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return RaisedButton(
       onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
           ? null

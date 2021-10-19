@@ -5,9 +5,9 @@ import 'package:flutter_shop_application/screens/cart_screen.dart';
 import 'package:flutter_shop_application/screens/drawer_screen.dart';
 import 'package:flutter_shop_application/screens/edit_product_screen.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
+import 'package:flutter_shop_application/screens/products_overview_screen.dart';
 import 'package:flutter_shop_application/screens/user_product_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_shop_application/screens/products_overview_screen.dart';
 import './screens/product_detail_screen.dart';
 import './providers/products.dart';
 import './providers/order.dart';
@@ -35,25 +35,26 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           canvasColor: Colors.white,
           primarySwatch: Colors.orange,
+          // ignore: deprecated_member_use
           accentColor: Colors.orange,
           fontFamily: 'Lato',
           textTheme: TextTheme(
-            title: TextStyle(
+            subtitle1: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.0,
             ),
-            body1: TextStyle(
+            bodyText1: TextStyle(
                 fontSize: 16, letterSpacing: 0.5, fontWeight: FontWeight.bold),
-            subtitle: TextStyle(
+            subtitle2: TextStyle(
               fontSize: 13,
               letterSpacing: 0.5,
             ),
-            display1: TextStyle(
+            headline4: TextStyle(
               fontSize: 28,
               letterSpacing: 0.5,
             ),
-            display2: TextStyle(
+            headline3: TextStyle(
               fontSize: 15,
             )
           ),
@@ -63,17 +64,18 @@ class MyApp extends StatelessWidget {
             centerTitle: true,
           ),
         ),
-        home: AuthenScreen(),
-        // Scaffold(
-        //   body: Stack(
-        //     children: [
-        //       DrawerScreen(),
-        //       ProductsOverviewScreen(),
-        //     ],
-        //   ),
-        // ),
+        home: 
+        // AuthenScreen(),
+        Scaffold(
+          body: Stack(
+            children: [
+              DrawerScreen(),
+              ProductsOverviewScreen(),
+            ],
+          ),
+        ),
         routes: {
-
+          ProductsOverviewScreen.routeName: (ctx) => ProductsOverviewScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           CartScreen.routeName: (ctx) => CartScreen(),
           OrderScreen.routeName: (ctx) => OrderScreen(),

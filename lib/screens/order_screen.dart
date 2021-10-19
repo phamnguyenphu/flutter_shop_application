@@ -25,7 +25,6 @@ class _OrderScreenState extends State<OrderScreen> {
         _isLoading = false;
       });
     });
-    // TODO: implement initState
     super.initState();
   }
 
@@ -36,7 +35,7 @@ class _OrderScreenState extends State<OrderScreen> {
       appBar: AppBar(
         title: Text(
           'My Order',
-          style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
       ),
       body: _isLoading

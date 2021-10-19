@@ -237,6 +237,7 @@ class _AuthCardState extends State<AuthCard> {
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   width: double.infinity,
+                  // ignore: deprecated_member_use
                   child: RaisedButton(
                     child:
                         Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
