@@ -11,8 +11,15 @@ import 'package:provider/provider.dart';
 import './screens/product_detail_screen.dart';
 import './providers/products.dart';
 import './providers/order.dart';
+import 'package:flutter/services.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+    SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.portraitUp,
+  ]);
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -39,34 +46,35 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.orange,
           fontFamily: 'Lato',
           textTheme: TextTheme(
-            subtitle1: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.0,
-            ),
-            bodyText1: TextStyle(
-                fontSize: 16, letterSpacing: 0.5, fontWeight: FontWeight.bold),
-            subtitle2: TextStyle(
-              fontSize: 13,
-              letterSpacing: 0.5,
-            ),
-            headline4: TextStyle(
-              fontSize: 28,
-              letterSpacing: 0.5,
-            ),
-            headline3: TextStyle(
-              fontSize: 15,
-            )
-          ),
+              subtitle1: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.0,
+              ),
+              bodyText1: TextStyle(
+                  fontSize: 16,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.bold),
+              subtitle2: TextStyle(
+                fontSize: 13,
+                letterSpacing: 0.5,
+              ),
+              headline4: TextStyle(
+                fontSize: 28,
+                letterSpacing: 0.5,
+              ),
+              headline3: TextStyle(
+                fontSize: 15,
+              )),
           appBarTheme: AppBarTheme(
             color: Colors.white,
             elevation: 0.0,
             centerTitle: true,
           ),
         ),
-        home: 
-        // AuthenScreen(),
-        Scaffold(
+        home:
+            // AuthenScreen(),
+            Scaffold(
           body: Stack(
             children: [
               DrawerScreen(),

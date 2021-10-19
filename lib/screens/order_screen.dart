@@ -31,24 +31,51 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     final orderData = Provider.of<Order>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'My Order',
-          style: Theme.of(context).textTheme.subtitle1,
-        ),
-      ),
-      body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(color: Colors.black,),
-            )
-          : ListView.builder(
-              itemBuilder: (ctx, index) => OrderItemWidget(
-                orderItem: orderData.orders[index],
-                indexOrder: index,
-              ),
-              itemCount: orderData.orders.length,
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'My Order',
+              style: Theme.of(context).textTheme.subtitle1,
             ),
+            bottom: TabBar(
+              tabs: [
+                Tab(text: "Ordered"),
+                Tab(text: "Packed"),
+                Tab(text: "In Transit"),
+                Tab(text: "Delivered"),
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: [
+              Container(
+                child: Center(child: Text("Ordered")),
+              ),
+              Container(
+                child: Center(child: Text("Packed")),
+              ),
+              Container(
+                child: Center(child: Text("In Transit")),
+              ),
+              Container(
+                child: Center(child: Text("Delivered")),
+              ),
+            ],
+          )
+          // _isLoading
+          //     ? Center(
+          //         child: CircularProgressIndicator(color: Colors.black,),
+          //       )
+          //     : ListView.builder(
+          //         itemBuilder: (ctx, index) => OrderItemWidget(
+          //           orderItem: orderData.orders[index],
+          //           indexOrder: index,
+          //         ),
+          //         itemCount: orderData.orders.length,
+          //       ),
+          ),
     );
   }
 }
