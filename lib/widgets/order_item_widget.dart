@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/order.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_shop_application/providers/order_item.dart';
+import 'package:provider/provider.dart';
 
 class OrderItemWidget extends StatefulWidget {
   final OrderItem orderItem;
@@ -53,7 +55,51 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                         ),
                       ],
                     ),
-                  )
+                  ),
+                  Spacer(),
+                  Container(child: Text(widget.orderItem.status)),
+                  widget.orderItem.status == 'Ordered'
+                      ? Container(
+                          child: IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Row(
+                                    children: [
+                                      Icon(Icons.notifications),
+                                      Text("Notification!"),
+                                    ],
+                                  ),
+                                  content: Text('Do you want to remove the item from the order?'),
+                                      actions: [
+                                        ElevatedButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text('No')),
+                                        ElevatedButton(
+                                            onPressed: () async {
+                                              try {
+                                                await Provider.of<Order>(
+                                                        context,listen: false)
+                                                    .deleteOrder(
+                                                        widget.orderItem.id);
+                                                        Navigator.pop(context);
+
+                                              } catch (e) {
+                                                print(e);
+                                              }
+                                            },
+                                            child: Text('Yes')),
+                                      ],
+                                    ));
+                          },
+                        ))
+                      : Container(),
                 ],
               ),
             ),

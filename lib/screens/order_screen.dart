@@ -41,41 +41,103 @@ class _OrderScreenState extends State<OrderScreen> {
             ),
             bottom: TabBar(
               tabs: [
-                Tab(text: "Ordered"),
-                Tab(text: "Packed"),
-                Tab(text: "In Transit"),
-                Tab(text: "Delivered"),
+                Tab(
+                    text: "Ordered",
+                    icon: Icon(Icons.my_library_books_outlined,
+                        color: Colors.amber)),
+                Tab(
+                    text: "Packed",
+                    icon:
+                        Icon(Icons.wallet_giftcard_sharp, color: Colors.blue)),
+                Tab(
+                    text: "In Transit",
+                    icon: Icon(Icons.delivery_dining_sharp,
+                        color: Colors.orange)),
+                Tab(
+                    text: "Delivered",
+                    icon: Icon(
+                      Icons.check_box,
+                      color: Colors.green,
+                    )),
               ],
             ),
           ),
           body: TabBarView(
             children: [
               Container(
-                child: Center(child: Text("Ordered")),
-              ),
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        )
+                      : orderData.listOrdered.length == 0
+                          ? Center(
+                              child: Text('No order any in this status'),
+                            )
+                          : ListView.builder(
+                              itemBuilder: (ctx, index) => OrderItemWidget(
+                                orderItem: orderData.listOrdered[index],
+                                indexOrder: index,
+                              ),
+                              itemCount: orderData.listOrdered.length,
+                            )),
               Container(
-                child: Center(child: Text("Packed")),
-              ),
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        )
+                      : orderData.listPacked.length == 0
+                          ? Center(
+                              child: Text('No order any in this status'),
+                            )
+                          : ListView.builder(
+                              itemBuilder: (ctx, index) => OrderItemWidget(
+                                orderItem: orderData.listPacked[index],
+                                indexOrder: index,
+                              ),
+                              itemCount: orderData.listPacked.length,
+                            )),
               Container(
-                child: Center(child: Text("In Transit")),
-              ),
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        )
+                      : orderData.listIntransit.length == 0
+                          ? Center(
+                              child: Text('No order any in this status'),
+                            )
+                          : ListView.builder(
+                              itemBuilder: (ctx, index) => OrderItemWidget(
+                                orderItem: orderData.listIntransit[index],
+                                indexOrder: index,
+                              ),
+                              itemCount: orderData.listIntransit.length,
+                            )),
               Container(
-                child: Center(child: Text("Delivered")),
-              ),
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        )
+                      : orderData.listDelivered.length == 0
+                          ? Center(
+                              child: Text('No order any in this status'),
+                            )
+                          : ListView.builder(
+                              itemBuilder: (ctx, index) => OrderItemWidget(
+                                orderItem: orderData.listDelivered[index],
+                                indexOrder: index,
+                              ),
+                              itemCount: orderData.listDelivered.length,
+                            ))
             ],
-          )
-          // _isLoading
-          //     ? Center(
-          //         child: CircularProgressIndicator(color: Colors.black,),
-          //       )
-          //     : ListView.builder(
-          //         itemBuilder: (ctx, index) => OrderItemWidget(
-          //           orderItem: orderData.orders[index],
-          //           indexOrder: index,
-          //         ),
-          //         itemCount: orderData.orders.length,
-          //       ),
-          ),
+          )),
     );
   }
 }
