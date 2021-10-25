@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/product.dart';
 import 'package:flutter_shop_application/providers/products.dart';
 import 'package:flutter_shop_application/screens/cart_screen.dart';
 import 'package:flutter_shop_application/widgets/badge.dart';
@@ -8,6 +9,7 @@ import '../providers/cart.dart';
 import 'dart:math';
 
 class ProductsOverviewScreen extends StatefulWidget {
+  static const routeName = "/products-overview";
   @override
   _ProductsOverviewScreenState createState() => _ProductsOverviewScreenState();
 }
@@ -19,6 +21,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   double yOffset = 0;
   bool _isInit = true;
   bool _isLoading = false;
+  List<Product>? searchProducts;
+  String keysearch = "";
 
   @override
   void didChangeDependencies() {
@@ -26,7 +30,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       setState(() {
         _isLoading = true;
       });
-      Provider.of<Products>(context).fetchProducts().catchError((onError){
+      Provider.of<Products>(context).fetchProducts().catchError((onError) {
         print(onError);
       }).then((_) {
         setState(() {
@@ -35,7 +39,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       });
     }
     _isInit = false;
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
@@ -52,74 +55,103 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ..rotateZ(_isDrawerOpen ? pi / 12 : 0),
       duration: Duration(milliseconds: 500),
       child: Scaffold(
-        appBar: AppBar(
-          leading: GestureDetector(
-            child: Icon(Icons.menu),
-            onTap: () {
-              setState(() {
-                if (_isDrawerOpen) {
-                  setState(() {
-                    xOffset = 0;
-                    yOffset = 0;
-                    _isDrawerOpen = false;
-                  });
-                } else {
-                  setState(() {
-                    xOffset = size.width - 150;
-                    yOffset = size.height / 5;
-                    _isDrawerOpen = true;
-                  });
-                }
-              });
-            },
-          ),
-          title: Text(
-            'My Shop',
-            style: Theme.of(context).textTheme.title,
-          ),
-          actions: [
-            _showFavoritesOnly
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _showFavoritesOnly = false;
-                      });
-                    },
-                    icon: Icon(Icons.favorite))
-                : IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _showFavoritesOnly = true;
-                      });
-                    },
-                    icon: Icon(Icons.list_alt)),
-            Consumer<Cart>(
-              builder: (_, value, ch) => Badge(
-                child: ch!,
-                value: value.cartItemCount.toString(),
-              ),
-              child: IconButton(
-                icon: Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(CartScreen.routeName);
-                },
-              ),
-            )
-          ],
-        ),
-        body: _isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: Colors.black,
+          appBar: AppBar(
+            leading: GestureDetector(
+              child: Icon(Icons.menu),
+              onTap: () {
+                setState(() {
+                  if (_isDrawerOpen) {
+                    setState(() {
+                      xOffset = 0;
+                      yOffset = 0;
+                      _isDrawerOpen = false;
+                    });
+                  } else {
+                    setState(() {
+                      xOffset = size.width - 150;
+                      yOffset = size.height / 5;
+                      _isDrawerOpen = true;
+                    });
+                  }
+                });
+              },
+            ),
+            title: Text(
+              'My Shop',
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            actions: [
+              _showFavoritesOnly
+                  ? IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _showFavoritesOnly = false;
+                        });
+                      },
+                      icon: const Icon(Icons.favorite, color: Colors.red))
+                  : IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _showFavoritesOnly = true;
+                        });
+                      },
+                      icon: Icon(Icons.list_alt,
+                          color: Theme.of(context).primaryColor)),
+              Consumer<Cart>(
+                builder: (_, value, ch) => Badge(
+                  child: ch!,
+                  value: value.cartItemCount.toString(),
+                ),
+                child: IconButton(
+                  icon: Icon(Icons.shopping_cart),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(CartScreen.routeName);
+                  },
                 ),
               )
-            : RefreshIndicator(
-                onRefresh: () => _refreshProducts(),
-                child: ProductsGrid(
-                  showFavs: _showFavoritesOnly,
+            ],
+          ),
+          body: Column(
+            children: [
+              Container(
+                height: size.height / 12,
+                padding: const EdgeInsets.all(8),
+                child: TextField(
+                  onSubmitted: (val) {
+                    setState(() {
+                      keysearch = val;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: "Search ?",
+                    prefixIcon: Icon(
+                      Icons.search,
+                      size: 28,
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2, color: Colors.black),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                  ),
                 ),
               ),
-      ),
+              Expanded(
+                child: _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                        ),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () => _refreshProducts(),
+                        child: ProductsGrid(
+                          showFavs: _showFavoritesOnly,
+                          keywords: keysearch,
+                        ),
+                      ),
+              )
+            ],
+          )),
     );
   }
 }

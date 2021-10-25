@@ -26,14 +26,14 @@ class DrawerScreen extends StatelessWidget {
                 ),
                 Text(
                   'Pham Nguyen Phu',
-                  style: Theme.of(context).textTheme.body1,
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 SizedBox(
                   height: 5.0,
                 ),
                 Text(
                   'phamnguyenphucp9@gmail.com',
-                  style: Theme.of(context).textTheme.subtitle,
+                  style: Theme.of(context).textTheme.subtitle2
                 ),
               ],
             ),

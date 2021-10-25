@@ -50,6 +50,42 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateQuanlity(String productId,int quanlity){
+    if (!_items.containsKey(productId)) {
+      return;
+    }
+    if (_items[productId]!.quantily >= 1) {
+      _items.update(
+        productId,
+        (value) => CartItem(
+            id: value.id,
+            title: value.title,
+            quantily: quanlity,
+            price: value.price,
+            imgUrl: value.imgUrl),
+      );
+    }
+    notifyListeners();
+  }
+
+  void addSingleItem(String productId) {
+    if (!_items.containsKey(productId)) {
+      return;
+    }
+    if (_items[productId]!.quantily >= 1) {
+      _items.update(
+        productId,
+        (value) => CartItem(
+            id: value.id,
+            title: value.title,
+            quantily: value.quantily + 1,
+            price: value.price,
+            imgUrl: value.imgUrl),
+      );
+    }
+    notifyListeners();
+  }
+
   void removeSingleItem(String productId) {
     if (!_items.containsKey(productId)) {
       return;
@@ -64,8 +100,6 @@ class Cart with ChangeNotifier {
             price: value.price,
             imgUrl: value.imgUrl),
       );
-    } else {
-      _items.remove(productId);
     }
     notifyListeners();
   }

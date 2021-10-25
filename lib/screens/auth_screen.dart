@@ -237,6 +237,7 @@ class _AuthCardState extends State<AuthCard> {
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   width: double.infinity,
+                  // ignore: deprecated_member_use
                   child: RaisedButton(
                     child:
                         Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
@@ -250,6 +251,7 @@ class _AuthCardState extends State<AuthCard> {
                     color: Color.fromRGBO(143, 148, 251, 1),
                   ),
                 ),
+              // ignore: deprecated_member_use
               FlatButton(
                 child: Text(
                     '${_authMode == AuthMode.Login ? 'Create an new account' : 'I have an account!'}'),

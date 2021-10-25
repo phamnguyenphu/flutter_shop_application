@@ -24,7 +24,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void initState() {
     _imageUrlNode.addListener(_updateImage);
-    // TODO: implement initState
     super.initState();
   }
 
@@ -39,7 +38,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
       }
     }
     _isInit = false;
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
@@ -50,7 +48,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
     _priceFocusNode.dispose();
     _descriptionNode.dispose();
     _imageUrlController.dispose();
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -90,6 +87,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   title: Text('An error occurred!'),
                   content: Text('Something went wrong'),
                   actions: [
+                    // ignore: deprecated_member_use
                     FlatButton(
                         onPressed: () {
                           Navigator.of(context).pop();
@@ -109,7 +107,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       appBar: AppBar(
         title: Text(
           'New Product',
-          style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         actions: [IconButton(onPressed: _saveForm, icon: Icon(Icons.save_alt))],
       ),

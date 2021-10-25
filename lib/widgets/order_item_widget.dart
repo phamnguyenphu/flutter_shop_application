@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/order.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_shop_application/providers/order_item.dart';
+import 'package:provider/provider.dart';
 
 class OrderItemWidget extends StatefulWidget {
   final OrderItem orderItem;
@@ -49,11 +51,55 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                           widget.orderItem.productsOrder.length > 1
                               ? '${widget.orderItem.productsOrder.length} items'
                               : '${widget.orderItem.productsOrder.length} item',
-                          style: Theme.of(context).textTheme.display2,
+                          style: Theme.of(context).textTheme.headline3,
                         ),
                       ],
                     ),
-                  )
+                  ),
+                  Spacer(),
+                  Container(child: Text(widget.orderItem.status)),
+                  widget.orderItem.status == 'Ordered'
+                      ? Container(
+                          child: IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Row(
+                                    children: [
+                                      Icon(Icons.notifications),
+                                      Text("Notification!"),
+                                    ],
+                                  ),
+                                  content: Text('Do you want to remove the item from the order?'),
+                                      actions: [
+                                        ElevatedButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text('No')),
+                                        ElevatedButton(
+                                            onPressed: () async {
+                                              try {
+                                                await Provider.of<Order>(
+                                                        context,listen: false)
+                                                    .deleteOrder(
+                                                        widget.orderItem.id);
+                                                        Navigator.pop(context);
+
+                                              } catch (e) {
+                                                print(e);
+                                              }
+                                            },
+                                            child: Text('Yes')),
+                                      ],
+                                    ));
+                          },
+                        ))
+                      : Container(),
                 ],
               ),
             ),
@@ -64,7 +110,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                 children: [
                   Text(
                     'ID Order',
-                    style: Theme.of(context).textTheme.display2,
+                    style: Theme.of(context).textTheme.headline3,
                   ),
                   Text(widget.orderItem.id.substring(14)),
                 ],
@@ -77,7 +123,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                 children: [
                   Text(
                     'Date Order',
-                    style: Theme.of(context).textTheme.display2,
+                    style: Theme.of(context).textTheme.headline3,
                   ),
                   Text(DateFormat.yMMMd().format(widget.orderItem.dateTime)),
                 ],
@@ -90,7 +136,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                 children: [
                   Text(
                     'Total Product',
-                    style: Theme.of(context).textTheme.display2,
+                    style: Theme.of(context).textTheme.headline3,
                   ),
                   Text('\$${widget.orderItem.amount.toStringAsFixed(2)}'),
                 ],
@@ -133,11 +179,11 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                             children: [
                               Text(
                                 e.title,
-                                style: Theme.of(context).textTheme.display2,
+                                style: Theme.of(context).textTheme.headline3,
                               ),
                               Text(
                                 '\$${e.price}' + ' x ' + '${e.quantily}',
-                                style: Theme.of(context).textTheme.display2,
+                                style: Theme.of(context).textTheme.headline3,
                               ),
                             ],
                           ),

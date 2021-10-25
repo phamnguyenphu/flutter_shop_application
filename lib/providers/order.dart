@@ -7,23 +7,68 @@ import 'package:http/http.dart' as http;
 
 class Order with ChangeNotifier {
   List<OrderItem> _orders = [];
+  List<OrderItem> _listOrdered = [];
+  List<OrderItem> _listPacked = [];
+  List<OrderItem> _listIntransit = [];
+  List<OrderItem> _listDelivered = [];
 
   List<OrderItem> get orders {
     return [..._orders];
   }
+  List<OrderItem> get listOrdered {
+    return [..._listOrdered];
+  }
+  List<OrderItem> get listPacked {
+    return [..._listPacked];
+  }
+  List<OrderItem> get listIntransit {
+    return [..._listIntransit];
+  }
+  List<OrderItem> get listDelivered {
+    return [..._listDelivered];
+  }
+
+
+  // List<OrderItem> selectOrder(String status) {
+  //   _orders.forEach((order) {
+  //     if (order.status == status) {
+  //       listOrder.add(order);
+  //     }
+  //   });
+  //   return listOrder;
+  // }
+
+  Future<void> deleteOrder(String id) async {
+    final url = Uri.parse(
+        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orderrs/$id.json');
+    final existingOrderIndex =
+        _listOrdered.indexWhere((element) => element.id == id);
+    OrderItem? existingOrder = orders[existingOrderIndex];
+    _listOrdered.removeAt(existingOrderIndex);
+    notifyListeners();
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      _listOrdered.insert(existingOrderIndex, existingOrder);
+      notifyListeners();
+      throw Exception;
+    }
+    existingOrder = null;
+  }
 
   Future<void> fetchOrder() async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders.json');
+        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orderrs.json');
     final response = await http.get(url);
     final List<OrderItem> loadingOrder = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
-    if (extractedData == null){
+    // ignore: unnecessary_null_comparison
+    if (extractedData == null) {
       return;
     }
     extractedData.forEach((orderId, orderData) {
       loadingOrder.add(OrderItem(
         id: orderId,
+        status: orderData['status'],
         dateTime: DateTime.parse(orderData['dateOrder']),
         amount: orderData['amount'],
         productsOrder: (orderData['productsOrder'] as List<dynamic>)
@@ -39,12 +84,16 @@ class Order with ChangeNotifier {
       ));
     });
     _orders = loadingOrder.reversed.toList();
+    _listOrdered = loadingOrder.reversed.where((order) => order.status == "Ordered").toList();
+    _listPacked = loadingOrder.reversed.where((order) => order.status == "Packed").toList();
+    _listIntransit = loadingOrder.reversed.where((order) => order.status == "In transit").toList();
+    _listDelivered = loadingOrder.reversed.where((order) => order.status == "Delivered").toList();
     notifyListeners();
   }
 
   Future<void> addOrder(List<CartItem> cart, double totalAmount) async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders.json');
+        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orderrs.json');
     final time = DateTime.now();
     if (cart.isEmpty && totalAmount == 0) {
       return;
@@ -54,6 +103,7 @@ class Order with ChangeNotifier {
           body: json.encode({
             'dateOrder': time.toIso8601String(),
             'amount': totalAmount,
+            'status': 'Ordered',
             'productsOrder': cart
                 .map((e) => {
                       'id': e.id,
@@ -71,6 +121,7 @@ class Order with ChangeNotifier {
             dateTime: time,
             amount: totalAmount,
             productsOrder: cart,
+            status: 'Ordered',
           ));
       notifyListeners();
     } catch (error) {

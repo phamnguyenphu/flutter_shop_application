@@ -18,7 +18,7 @@ class UserProductScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'My Products',
-          style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         actions: [
           IconButton(

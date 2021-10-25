@@ -5,11 +5,13 @@ class OrderItem {
   final DateTime dateTime;
   final double amount;
   final List<CartItem> productsOrder;
+  final String status;
 
   OrderItem({
     required this.id,
     required this.dateTime,
     required this.amount,
     required this.productsOrder,
+    required this.status
   });
 }
