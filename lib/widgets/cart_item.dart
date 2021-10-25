@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart.dart';
 import 'package:sizer/sizer.dart';
@@ -193,12 +194,9 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                     Container(
                         height: 3.h,
                         width: 6.w,
-                        decoration: BoxDecoration(
-                            border:
-                                Border.all(width: 0.1.w, color: Colors.grey)),
                         child: InkWell(
                           child: Center(
-                            child: Text('-', style: TextStyle(fontSize: 15.sp)),
+                            child: Text('<', style: TextStyle(fontSize: 15.sp)),
                           ),
                           onTap: () {
                             try {
@@ -219,9 +217,8 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                       alignment: Alignment.center,
                       height: 3.h,
                       width: 12.w,
-                      decoration: BoxDecoration(
-                          border: Border.all(width: 0.1.w, color: Colors.grey)),
                       child: TextFormField(
+                        style: TextStyle(decoration: TextDecoration.none),
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                         ],
@@ -238,13 +235,10 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                     Container(
                         height: 3.h,
                         width: 6.w,
-                        decoration: BoxDecoration(
-                            border:
-                                Border.all(width: 0.1.w, color: Colors.grey)),
                         child: InkWell(
                           child: Center(
                             child: Text(
-                              '+',
+                              '>',
                               style: TextStyle(fontSize: 15.sp),
                             ),
                           ),
