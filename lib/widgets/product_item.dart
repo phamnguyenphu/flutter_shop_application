@@ -39,16 +39,18 @@ class ProductItem extends StatelessWidget {
               backgroundColor: Colors.black54,
               leading: Consumer<Product>(
                 builder: (ctx, value, _) => IconButton(
+                  // ignore: deprecated_member_use
                   color: Theme.of(context).accentColor,
                   icon: value.isFavorite
-                      ? Icon(Icons.favorite)
-                      : Icon(Icons.favorite_border),
+                      ? Icon(Icons.favorite,color:Colors.red)
+                      : Icon(Icons.favorite_border,color:Colors.red),
                   onPressed: () {
                     value.toggleFavorite();
                   },
                 ),
               ),
               trailing: IconButton(
+                // ignore: deprecated_member_use
                 color: Theme.of(context).accentColor,
                 icon: Icon(Icons.shopping_cart),
                 onPressed: () {

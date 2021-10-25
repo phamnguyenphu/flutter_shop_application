@@ -40,6 +40,8 @@ class _OrderScreenState extends State<OrderScreen> {
               style: Theme.of(context).textTheme.subtitle1,
             ),
             bottom: TabBar(
+              indicatorColor: Colors.red,
+              
               tabs: [
                 Tab(
                     text: "Ordered",

@@ -11,6 +11,7 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
+    FocusScopeNode currentFocus = FocusScope.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -18,64 +19,73 @@ class CartScreen extends StatelessWidget {
           style: Theme.of(context).textTheme.subtitle1,
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 3,
-            child: cart.items.isEmpty
-                ? Center(
-                    child: const Text(
-                      'No have any item!',
-                      style: TextStyle(color: Colors.grey),
+      body: GestureDetector(
+        onTap: () {
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Column(
+          children: [
+            Expanded(
+              flex: 3,
+              child: cart.items.isEmpty
+                  ? Center(
+                      child: const Text(
+                        'No have any item!',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemBuilder: (ctx, index) => CartItemWidget(
+                        id: cart.items.values.toList()[index].id,
+                        title: cart.items.values.toList()[index].title,
+                        price: cart.items.values.toList()[index].price,
+                        quanlity: cart.items.values.toList()[index].quantily,
+                        imgUrl: cart.items.values.toList()[index].imgUrl,
+                        productId: cart.items.keys.toList()[index],
+                      ),
+                      itemCount: cart.items.length,
                     ),
-                  )
-                : ListView.builder(
-                    itemBuilder: (ctx, index) => CartItemWidget(
-                      id: cart.items.values.toList()[index].id,
-                      title: cart.items.values.toList()[index].title,
-                      price: cart.items.values.toList()[index].price,
-                      quanlity: cart.items.values.toList()[index].quantily,
-                      imgUrl: cart.items.values.toList()[index].imgUrl,
-                      productId: cart.items.keys.toList()[index],
-                    ),
-                    itemCount: cart.items.length,
-                  ),
-          ),
-          Divider(),
-          Expanded(
-            flex: 1,
-            child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 30.0, vertical: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Total',
-                          style: Theme.of(context).textTheme.headline4,
+            ),
+            Divider(),
+            Expanded(
+              flex: 1,
+              child: Container(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Total',
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                            Text(
+                              '\$ ${cart.totalAmount.toStringAsFixed(2)}',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                          ],
                         ),
-                        Text(
-                          '\$ ${cart.totalAmount.toStringAsFixed(2)}',
-                          style: Theme.of(context).textTheme.bodyText1,
-                        ),
-                      ],
-                    ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(
+                            bottom: 20.0, left: 30, right: 30, top: 0),
+                        width: double.infinity,
+                        child: OrderButton(cart: cart),
+                      )
+                    ],
                   ),
-                  Container(
-                    padding: EdgeInsets.only(
-                        bottom: 20.0, left: 30, right: 30, top: 0),
-                    width: double.infinity,
-                    child: OrderButton(cart: cart),
-                  )
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

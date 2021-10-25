@@ -251,6 +251,7 @@ class _AuthCardState extends State<AuthCard> {
                     color: Color.fromRGBO(143, 148, 251, 1),
                   ),
                 ),
+              // ignore: deprecated_member_use
               FlatButton(
                 child: Text(
                     '${_authMode == AuthMode.Login ? 'Create an new account' : 'I have an account!'}'),

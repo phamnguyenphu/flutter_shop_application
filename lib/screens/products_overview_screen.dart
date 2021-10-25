@@ -123,7 +123,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                     });
                   },
                   decoration: InputDecoration(
-                    hintText: "Bạn tìm gì hôm nay?",
+                    hintText: "Search ?",
                     prefixIcon: Icon(
                       Icons.search,
                       size: 28,
