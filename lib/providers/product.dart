@@ -9,6 +9,10 @@ class Product with ChangeNotifier {
   final String description;
   final double price;
   final String imageUrl;
+  final String size;
+  final String soldInQuantity;
+  final String type;
+  final String quanlity;
   bool isFavorite;
 
   Product({
@@ -17,6 +21,10 @@ class Product with ChangeNotifier {
     required this.description,
     required this.price,
     required this.imageUrl,
+    required this.size,
+    required this.soldInQuantity,
+    required this.type,
+    required this.quanlity,
     this.isFavorite = false,
   });
 

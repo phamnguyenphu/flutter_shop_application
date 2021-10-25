@@ -16,8 +16,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlNode = FocusNode();
   final _form = GlobalKey<FormState>();
-  var _editedProduct =
-      Product(id: 'null', title: '', description: '', price: 0, imageUrl: '');
+  var _editedProduct = Product(
+      id: 'null',
+      title: '',
+      description: '',
+      price: 0,
+      imageUrl: '',
+      size: '41',
+      type: 'Converse',
+      quanlity: '10',
+      soldInQuantity: '10');
   var _isInit = true;
   bool _isLoading = false;
 
@@ -142,13 +150,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
-                          id: _editedProduct.id,
-                          title: value!,
-                          description: _editedProduct.description,
-                          price: _editedProduct.price,
-                          imageUrl: _editedProduct.imageUrl,
-                          isFavorite: _editedProduct.isFavorite,
-                        );
+                            id: _editedProduct.id,
+                            title: value!,
+                            description: _editedProduct.description,
+                            price: _editedProduct.price,
+                            imageUrl: _editedProduct.imageUrl,
+                            isFavorite: _editedProduct.isFavorite,
+                            type: _editedProduct.type,
+                            size: _editedProduct.size,
+                            quanlity: _editedProduct.quanlity,
+                            soldInQuantity: _editedProduct.soldInQuantity);
                       },
                     ),
                     TextFormField(
@@ -178,13 +189,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
-                          id: _editedProduct.id,
-                          title: _editedProduct.title,
-                          description: _editedProduct.description,
-                          price: double.parse(value!),
-                          imageUrl: _editedProduct.imageUrl,
-                          isFavorite: _editedProduct.isFavorite,
-                        );
+                            id: _editedProduct.id,
+                            title: _editedProduct.title,
+                            description: _editedProduct.description,
+                            price: double.parse(value!),
+                            imageUrl: _editedProduct.imageUrl,
+                            isFavorite: _editedProduct.isFavorite,
+                            type: _editedProduct.type,
+                            size: _editedProduct.size,
+                            quanlity: _editedProduct.quanlity,
+                            soldInQuantity: _editedProduct.soldInQuantity);
                       },
                     ),
                     TextFormField(
@@ -208,13 +222,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       focusNode: _descriptionNode,
                       onSaved: (value) {
                         _editedProduct = Product(
-                          id: _editedProduct.id,
-                          title: _editedProduct.title,
-                          description: value!,
-                          price: _editedProduct.price,
-                          imageUrl: _editedProduct.imageUrl,
-                          isFavorite: _editedProduct.isFavorite,
-                        );
+                            id: _editedProduct.id,
+                            title: _editedProduct.title,
+                            description: value!,
+                            price: _editedProduct.price,
+                            imageUrl: _editedProduct.imageUrl,
+                            isFavorite: _editedProduct.isFavorite,
+                            type: _editedProduct.type,
+                            size: _editedProduct.size,
+                            quanlity: _editedProduct.quanlity,
+                            soldInQuantity: _editedProduct.soldInQuantity);
                       },
                     ),
                     Row(
@@ -276,13 +293,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             },
                             onSaved: (value) {
                               _editedProduct = Product(
-                                id: _editedProduct.id,
-                                title: _editedProduct.title,
-                                description: _editedProduct.description,
-                                price: _editedProduct.price,
-                                imageUrl: value!,
-                                isFavorite: _editedProduct.isFavorite,
-                              );
+                                  id: _editedProduct.id,
+                                  title: _editedProduct.title,
+                                  description: _editedProduct.description,
+                                  price: _editedProduct.price,
+                                  imageUrl: value!,
+                                  isFavorite: _editedProduct.isFavorite,
+                                  type: 'Sneaker',
+                                  size: '41',
+                                  quanlity: '10',
+                                  soldInQuantity: '10');
                             },
                           ),
                         ),

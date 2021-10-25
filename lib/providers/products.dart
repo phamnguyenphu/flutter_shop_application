@@ -39,6 +39,10 @@ class Products with ChangeNotifier {
             price: productData['price'],
             imageUrl: productData['imgUrl'],
             isFavorite: productData['isFavorite'],
+            size: productData['size'],
+            soldInQuantity: productData['soldInQuantity'],
+            type: productData['type'],
+            quanlity: productData['quanlity'],
           ),
         );
       });
@@ -49,11 +53,11 @@ class Products with ChangeNotifier {
     }
   }
 
-  List<Product> searchProducts(String name){
+  List<Product> searchProducts(String name) {
     List<Product> result = [];
     _items.forEach((p) {
       var exist = p.title.contains(name);
-      if(exist){
+      if (exist) {
         result.add(p);
       }
     });
@@ -72,14 +76,24 @@ class Products with ChangeNotifier {
           'imgUrl': product.imageUrl,
           'isFavorite': product.isFavorite,
           'price': product.price,
+          'size': product.size,
+          'type': product.type,
+          'quanlity': product.quanlity,
+          'soldInQuantity': product.soldInQuantity
         }),
       );
       final newProduct = Product(
-          id: json.decode(response.body)['name'],
-          title: product.title,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl);
+        id: json.decode(response.body)['name'],
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        isFavorite: product.isFavorite,
+        size: product.size,
+        soldInQuantity: product.soldInQuantity,
+        type: product.type,
+        quanlity: product.quanlity,
+      );
       _items.add(newProduct);
       notifyListeners();
     } catch (error) {
@@ -99,6 +113,10 @@ class Products with ChangeNotifier {
         'description': newProduct.description,
         'imgUrl': newProduct.imageUrl,
         'price': newProduct.price,
+        'size': newProduct.size,
+        'type': newProduct.type,
+        'quanlity': newProduct.quanlity,
+        'soldInQuantity': newProduct.soldInQuantity
       }),
     );
     _items[indexProduct] = newProduct;
