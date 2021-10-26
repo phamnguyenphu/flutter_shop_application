@@ -5,7 +5,7 @@ class OrderItem {
   final DateTime dateTime;
   final double amount;
   final List<CartItem> productsOrder;
-  final String status;
+  String status;
 
   OrderItem({
     required this.id,

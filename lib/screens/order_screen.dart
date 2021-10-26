@@ -32,7 +32,7 @@ class _OrderScreenState extends State<OrderScreen> {
   Widget build(BuildContext context) {
     final orderData = Provider.of<Order>(context);
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
           appBar: AppBar(
             title: Text(
@@ -40,8 +40,8 @@ class _OrderScreenState extends State<OrderScreen> {
               style: Theme.of(context).textTheme.subtitle1,
             ),
             bottom: TabBar(
+              isScrollable: true,
               indicatorColor: Colors.red,
-              
               tabs: [
                 Tab(
                     text: "Ordered",
@@ -60,6 +60,12 @@ class _OrderScreenState extends State<OrderScreen> {
                     icon: Icon(
                       Icons.check_box,
                       color: Colors.green,
+                    )),
+                Tab(
+                    text: "Cancel",
+                    icon: Icon(
+                      Icons.close,
+                      color: Colors.red,
                     )),
               ],
             ),
@@ -137,6 +143,24 @@ class _OrderScreenState extends State<OrderScreen> {
                                 indexOrder: index,
                               ),
                               itemCount: orderData.listDelivered.length,
+                            )),
+              Container(
+                  child: _isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        )
+                      : orderData.listCanceled.length == 0
+                          ? Center(
+                              child: Text('No order any in this status'),
+                            )
+                          : ListView.builder(
+                              itemBuilder: (ctx, index) => OrderItemWidget(
+                                orderItem: orderData.listCanceled[index],
+                                indexOrder: index,
+                              ),
+                              itemCount: orderData.listCanceled.length,
                             ))
             ],
           )),

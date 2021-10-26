@@ -29,6 +29,7 @@ class Products with ChangeNotifier {
       if (extractedData == null) {
         return;
       }
+      print(response);
       final List<Product> loadingProducts = [];
       extractedData.forEach((productId, productData) {
         loadingProducts.add(

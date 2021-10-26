@@ -86,7 +86,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                                               try {
                                                 await Provider.of<Order>(
                                                         context,listen: false)
-                                                    .deleteOrder(
+                                                    .cancelOrder(
                                                         widget.orderItem.id);
                                                         Navigator.pop(context);
 

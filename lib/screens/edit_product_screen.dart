@@ -299,9 +299,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                   price: _editedProduct.price,
                                   imageUrl: value!,
                                   isFavorite: _editedProduct.isFavorite,
-                                  type: 'Sneaker',
-                                  size: '41',
-                                  quanlity: '10',
+                                  type: 'Converse',
+                                  size: '43',
+                                  quanlity: '5',
                                   soldInQuantity: '10');
                             },
                           ),

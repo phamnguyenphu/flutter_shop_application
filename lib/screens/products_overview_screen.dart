@@ -23,6 +23,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   bool _isLoading = false;
   List<Product>? searchProducts;
   String keysearch = "";
+  TextEditingController _keysearch = new TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -49,12 +50,13 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    FocusScopeNode currentFocus = FocusScope.of(context);
     return AnimatedContainer(
-      transform: Matrix4.translationValues(xOffset, yOffset, 0)
-        ..scale(_isDrawerOpen ? 0.9 : 1.00)
-        ..rotateZ(_isDrawerOpen ? pi / 12 : 0),
-      duration: Duration(milliseconds: 500),
-      child: Scaffold(
+        transform: Matrix4.translationValues(xOffset, yOffset, 0)
+          ..scale(_isDrawerOpen ? 0.9 : 1.00)
+          ..rotateZ(_isDrawerOpen ? pi / 12 : 0),
+        duration: Duration(milliseconds: 500),
+        child: Scaffold(
           appBar: AppBar(
             leading: GestureDetector(
               child: Icon(Icons.menu),
@@ -111,47 +113,63 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               )
             ],
           ),
-          body: Column(
-            children: [
-              Container(
-                height: size.height / 12,
-                padding: const EdgeInsets.all(8),
-                child: TextField(
-                  onSubmitted: (val) {
-                    setState(() {
-                      keysearch = val;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Search ?",
-                    prefixIcon: Icon(
-                      Icons.search,
-                      size: 28,
-                    ),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(width: 2, color: Colors.black),
-                      borderRadius: BorderRadius.circular(32),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: _isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.black,
+          body: GestureDetector(
+              onTap: () {
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              },
+              child: Column(
+                children: [
+                  Container(
+                    height: size.height / 12,
+                    padding: const EdgeInsets.all(8),
+                    child: TextField(
+                      controller: _keysearch,
+                      onSubmitted: (val) {
+                        setState(() {
+                          _keysearch.text = val;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: "Search ?",
+                        prefixIcon: Icon(
+                          Icons.search,
+                          size: 28,
                         ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: () => _refreshProducts(),
-                        child: ProductsGrid(
-                          showFavs: _showFavoritesOnly,
-                          keywords: keysearch,
+                        suffixIcon: _keysearch.text.length != 0
+                            ? IconButton(
+                                icon: Icon(Icons.close),
+                                onPressed: () {
+                                  setState(() {
+                                    _keysearch.text = '';
+                                  });
+                                })
+                            : null,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(width: 2, color: Colors.black),
+                          borderRadius: BorderRadius.circular(32),
                         ),
                       ),
-              )
-            ],
-          )),
-    );
+                    ),
+                  ),
+                  Expanded(
+                    child: _isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
+                          )
+                        : RefreshIndicator(
+                            onRefresh: () => _refreshProducts(),
+                            child: ProductsGrid(
+                              showFavs: _showFavoritesOnly,
+                              keywords: _keysearch.text,
+                            ),
+                          ),
+                  )
+                ],
+              )),
+        ));
   }
 }
