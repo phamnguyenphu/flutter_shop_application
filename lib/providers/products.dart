@@ -54,9 +54,9 @@ class Products with ChangeNotifier {
     }
   }
 
-  List<Product> searchProducts(String name) {
+  List<Product> searchProducts(String name,List<Product> listProducts ) {
     List<Product> result = [];
-    _items.forEach((p) {
+    listProducts.forEach((p) {
       var exist = p.title.contains(name);
       if (exist) {
         result.add(p);

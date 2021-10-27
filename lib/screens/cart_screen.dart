@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/order.dart';
+import 'package:flutter_shop_application/screens/payment_screen.dart';
 import 'package:flutter_shop_application/widgets/cart_item.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart.dart';
@@ -110,19 +111,22 @@ class _OrderButtonState extends State<OrderButton> {
   Widget build(BuildContext context) {
     // ignore: deprecated_member_use
     return RaisedButton(
-      onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
-          ? null
-          : () async {
-              setState(() {
-                _isLoading = true;
-              });
-              await Provider.of<Order>(context, listen: false).addOrder(
-                  widget.cart.items.values.toList(), widget.cart.totalAmount);
-              setState(() {
-                _isLoading = false;
-              });
-              widget.cart.clearCart();
-            },
+      onPressed: () {
+        Navigator.of(context).pushNamed(PaymentScreen.routeName);
+      },
+      // (widget.cart.totalAmount <= 0 || _isLoading)
+      //     ? null
+      //     : () async {
+      //         setState(() {
+      //           _isLoading = true;
+      //         });
+      //         await Provider.of<Order>(context, listen: false).addOrder(
+      //             widget.cart.items.values.toList(), widget.cart.totalAmount);
+      //         setState(() {
+      //           _isLoading = false;
+      //         });
+      //         widget.cart.clearCart();
+      //       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: _isLoading

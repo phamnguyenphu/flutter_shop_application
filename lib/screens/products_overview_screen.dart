@@ -1,3 +1,4 @@
+import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/product.dart';
 import 'package:flutter_shop_application/providers/products.dart';
@@ -14,7 +15,8 @@ class ProductsOverviewScreen extends StatefulWidget {
   _ProductsOverviewScreenState createState() => _ProductsOverviewScreenState();
 }
 
-class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
+class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
+    with SingleTickerProviderStateMixin {
   bool _showFavoritesOnly = false;
   bool _isDrawerOpen = false;
   double xOffset = 0;
@@ -24,20 +26,23 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   List<Product>? searchProducts;
   String keysearch = "";
   TextEditingController _keysearch = new TextEditingController();
+  AnimationController? controller;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds:1000));
+  }
 
   @override
   void didChangeDependencies() {
-    if (_isInit) {
-      setState(() {
-        _isLoading = true;
-      });
-      Provider.of<Products>(context).fetchProducts().catchError((onError) {
-        print(onError);
-      }).then((_) {
-        setState(() {
-          _isLoading = false;
-        });
-      });
+     if (_isInit) {
+      _isLoading = true;
+      Provider.of<Products>(context)
+          .fetchProducts()
+          .then((_) => _isLoading = false);
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -83,22 +88,19 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               style: Theme.of(context).textTheme.subtitle1,
             ),
             actions: [
-              _showFavoritesOnly
-                  ? IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _showFavoritesOnly = false;
-                        });
-                      },
-                      icon: const Icon(Icons.favorite, color: Colors.red))
-                  : IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _showFavoritesOnly = true;
-                        });
-                      },
-                      icon: Icon(Icons.list_alt,
-                          color: Theme.of(context).primaryColor)),
+              AnimatedIconButton(
+                duration: Duration(milliseconds: 1000),
+                size: 25,
+                onPressed: (){
+                  setState(() {
+                      _showFavoritesOnly = !_showFavoritesOnly;
+                    });
+                    print(_showFavoritesOnly);
+                },
+                icons: [
+                AnimatedIconItem(icon:Icon( Icons.list_alt,color: Colors.black)),
+                AnimatedIconItem(icon:Icon( Icons.favorite,color:Colors.red))
+              ],),
               Consumer<Cart>(
                 builder: (_, value, ch) => Badge(
                   child: ch!,
@@ -173,3 +175,32 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         ));
   }
 }
+    // IconButton(
+              //     onPressed: () {
+              //       setState(() {
+              //         _showFavoritesOnly = !_showFavoritesOnly;
+              //         _showFavoritesOnly
+              //             ? controller!.reverse()
+              //             : controller!.forward();
+              //       });
+              //     },
+              //     icon: AnimatedIcon(
+              //         icon: AnimatedIcons.list_view,
+              //         progress: controller!,
+              //         color: Colors.red)),
+              // _showFavoritesOnly
+              //     ? IconButton(
+              //         onPressed: () {
+              //           setState(() {
+              //             _showFavoritesOnly = false;
+              //           });
+              //         },
+              //         icon: const Icon(Icons.favorite, color: Colors.red))
+              //     : IconButton(
+              //         onPressed: () {
+              //           setState(() {
+              //             _showFavoritesOnly = true;
+              //           });
+              //         },
+              //         icon: Icon(Icons.list_alt,
+              //             color: Theme.of(context).primaryColor)),
