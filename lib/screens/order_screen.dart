@@ -81,7 +81,7 @@ class _OrderScreenState extends State<OrderScreen> {
                         )
                       : orderData.listOrdered.length == 0
                           ? Center(
-                              child: Text('No order any in this status'),
+                              child: Text('No order any in this status', style: Theme.of(context).textTheme.subtitle2),
                             )
                           : ListView.builder(
                               itemBuilder: (ctx, index) => OrderItemWidget(
@@ -99,7 +99,7 @@ class _OrderScreenState extends State<OrderScreen> {
                         )
                       : orderData.listPacked.length == 0
                           ? Center(
-                              child: Text('No order any in this status'),
+                              child: Text('No order any in this status', style: Theme.of(context).textTheme.subtitle2),
                             )
                           : ListView.builder(
                               itemBuilder: (ctx, index) => OrderItemWidget(
@@ -117,7 +117,7 @@ class _OrderScreenState extends State<OrderScreen> {
                         )
                       : orderData.listIntransit.length == 0
                           ? Center(
-                              child: Text('No order any in this status'),
+                              child: Text('No order any in this status', style: Theme.of(context).textTheme.subtitle2),
                             )
                           : ListView.builder(
                               itemBuilder: (ctx, index) => OrderItemWidget(
@@ -135,7 +135,7 @@ class _OrderScreenState extends State<OrderScreen> {
                         )
                       : orderData.listDelivered.length == 0
                           ? Center(
-                              child: Text('No order any in this status'),
+                              child: Text('No order any in this status', style: Theme.of(context).textTheme.subtitle2),
                             )
                           : ListView.builder(
                               itemBuilder: (ctx, index) => OrderItemWidget(
@@ -153,7 +153,7 @@ class _OrderScreenState extends State<OrderScreen> {
                         )
                       : orderData.listCanceled.length == 0
                           ? Center(
-                              child: Text('No order any in this status'),
+                              child: Text('No order any in this status', style: Theme.of(context).textTheme.subtitle2),
                             )
                           : ListView.builder(
                               itemBuilder: (ctx, index) => OrderItemWidget(

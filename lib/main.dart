@@ -54,7 +54,12 @@ class MyApp extends StatelessWidget {
                     letterSpacing: 1.0,
                   ),
                   bodyText1: TextStyle(
-                      fontSize: 16,
+                      fontSize: 13.sp,
+                      letterSpacing: 0.5,
+                      fontWeight: FontWeight.bold),
+                  bodyText2: TextStyle(
+                      color: Colors.red,
+                      fontSize: 13.sp,
                       letterSpacing: 0.5,
                       fontWeight: FontWeight.bold),
                   subtitle2: TextStyle(
@@ -62,7 +67,7 @@ class MyApp extends StatelessWidget {
                     letterSpacing: 0.5,
                   ),
                   headline4: TextStyle(
-                    fontSize: 28,
+                    fontSize: 20.sp,
                     letterSpacing: 0.5,
                   ),
                   headline3: TextStyle(

@@ -12,7 +12,6 @@ class ProductsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
-    print(keywords);
     var products = showFavs ? productsData.itemsFavorites : productsData.items;
     if (keywords.length > 0) {
       products =

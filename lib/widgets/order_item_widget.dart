@@ -43,7 +43,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Order # ${widget.indexOrder}'),
+                        Text('Order # ${widget.indexOrder}',
+                            style: Theme.of(context).textTheme.bodyText1),
                         SizedBox(
                           height: 10.0,
                         ),
@@ -57,7 +58,9 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                     ),
                   ),
                   Spacer(),
-                  Container(child: Text(widget.orderItem.status)),
+                  Container(
+                      child: Text(widget.orderItem.status,
+                          style: Theme.of(context).textTheme.subtitle1)),
                   widget.orderItem.status == 'Ordered'
                       ? Container(
                           child: IconButton(
@@ -69,32 +72,45 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: Row(
-                                    children: [
-                                      Icon(Icons.notifications),
-                                      Text("Notification!"),
-                                    ],
-                                  ),
-                                  content: Text('Do you want to remove the item from the order?'),
+                                      title: Row(
+                                        children: [
+                                          Icon(Icons.notifications),
+                                          Text("Notification!",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .subtitle1),
+                                        ],
+                                      ),
+                                      content: Text(
+                                          'Do you want to remove the item from the order?',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle2),
                                       actions: [
                                         ElevatedButton(
                                             onPressed: () =>
                                                 Navigator.pop(context),
-                                            child: Text('No')),
+                                            child: Text('No',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1)),
                                         ElevatedButton(
                                             onPressed: () async {
                                               try {
                                                 await Provider.of<Order>(
-                                                        context,listen: false)
+                                                        context,
+                                                        listen: false)
                                                     .cancelOrder(
                                                         widget.orderItem.id);
-                                                        Navigator.pop(context);
-
+                                                Navigator.pop(context);
                                               } catch (e) {
                                                 print(e);
                                               }
                                             },
-                                            child: Text('Yes')),
+                                            child: Text('Yes',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1)),
                                       ],
                                     ));
                           },
@@ -112,7 +128,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                     'ID Order',
                     style: Theme.of(context).textTheme.headline3,
                   ),
-                  Text(widget.orderItem.id.substring(14)),
+                  Text(widget.orderItem.id.substring(14),
+                      style: Theme.of(context).textTheme.bodyText1),
                 ],
               ),
             ),
@@ -125,7 +142,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                     'Date Order',
                     style: Theme.of(context).textTheme.headline3,
                   ),
-                  Text(DateFormat.yMMMd().format(widget.orderItem.dateTime)),
+                  Text(DateFormat.yMMMd().format(widget.orderItem.dateTime),
+                      style: Theme.of(context).textTheme.bodyText1),
                 ],
               ),
             ),
@@ -138,7 +156,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                     'Total Product',
                     style: Theme.of(context).textTheme.headline3,
                   ),
-                  Text('\$${widget.orderItem.amount.toStringAsFixed(2)}'),
+                  Text('\$${widget.orderItem.amount.toStringAsFixed(2)}',
+                      style: Theme.of(context).textTheme.bodyText1),
                 ],
               ),
             ),
