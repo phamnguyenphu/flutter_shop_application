@@ -175,32 +175,3 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
         ));
   }
 }
-    // IconButton(
-              //     onPressed: () {
-              //       setState(() {
-              //         _showFavoritesOnly = !_showFavoritesOnly;
-              //         _showFavoritesOnly
-              //             ? controller!.reverse()
-              //             : controller!.forward();
-              //       });
-              //     },
-              //     icon: AnimatedIcon(
-              //         icon: AnimatedIcons.list_view,
-              //         progress: controller!,
-              //         color: Colors.red)),
-              // _showFavoritesOnly
-              //     ? IconButton(
-              //         onPressed: () {
-              //           setState(() {
-              //             _showFavoritesOnly = false;
-              //           });
-              //         },
-              //         icon: const Icon(Icons.favorite, color: Colors.red))
-              //     : IconButton(
-              //         onPressed: () {
-              //           setState(() {
-              //             _showFavoritesOnly = true;
-              //           });
-              //         },
-              //         icon: Icon(Icons.list_alt,
-              //             color: Theme.of(context).primaryColor)),

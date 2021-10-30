@@ -1,7 +1,10 @@
+// ignore_for_file: unnecessary_statements
+
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/screens/payment_screen.dart';
 import 'package:flutter_shop_application/widgets/cart_item.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 import '../providers/cart.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -38,6 +41,7 @@ class CartScreen extends StatelessWidget {
                     )
                   : ListView.builder(
                       itemBuilder: (ctx, index) => Slidable(
+                        actionExtentRatio: 0.2,
                         actionPane: SlidableDrawerActionPane(),
                         child: CartItemWidget(
                           id: cart.items.values.toList()[index].id,
@@ -119,7 +123,11 @@ class CartScreen extends StatelessWidget {
                             ),
                             Text(
                               '\$ ${cart.totalAmount.toStringAsFixed(2)}',
-                              style: Theme.of(context).textTheme.bodyText2,
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 13.sp,
+                                  letterSpacing: 0.5,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -155,41 +163,21 @@ class OrderButton extends StatefulWidget {
 }
 
 class _OrderButtonState extends State<OrderButton> {
-  var _isLoading = false;
-
   @override
   Widget build(BuildContext context) {
     // ignore: deprecated_member_use
     return RaisedButton(
       onPressed: () {
-        Navigator.of(context).pushNamed(PaymentScreen.routeName);
+        (widget.cart.totalAmount <= 0)
+            ? null
+            : Navigator.of(context).pushNamed(PaymentScreen.routeName);
       },
-      // (widget.cart.totalAmount <= 0 || _isLoading)
-      //     ? null
-      //     : () async {
-      //         setState(() {
-      //           _isLoading = true;
-      //         });
-      //         await Provider.of<Order>(context, listen: false).addOrder(
-      //             widget.cart.items.values.toList(), widget.cart.totalAmount);
-      //         setState(() {
-      //           _isLoading = false;
-      //         });
-      //         widget.cart.clearCart();
-      //       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: _isLoading
-            ? SizedBox(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
-                height: 25,
-              )
-            : Text(
-                'Purchase Now',
-                style: TextStyle(fontSize: 20),
-              ),
+        child: Text(
+          'Purchase Now',
+          style: TextStyle(fontSize: 20),
+        ),
       ),
       color: Colors.black,
       textColor: Colors.white,

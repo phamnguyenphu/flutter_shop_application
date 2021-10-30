@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/cart.dart';
+import 'package:flutter_shop_application/screens/address_screen.dart';
 import 'package:flutter_shop_application/screens/cart_screen.dart';
 import 'package:flutter_shop_application/screens/drawer_screen.dart';
 import 'package:flutter_shop_application/screens/edit_product_screen.dart';
@@ -57,11 +58,6 @@ class MyApp extends StatelessWidget {
                       fontSize: 13.sp,
                       letterSpacing: 0.5,
                       fontWeight: FontWeight.bold),
-                  bodyText2: TextStyle(
-                      color: Colors.red,
-                      fontSize: 13.sp,
-                      letterSpacing: 0.5,
-                      fontWeight: FontWeight.bold),
                   subtitle2: TextStyle(
                     fontSize: 13,
                     letterSpacing: 0.5,
@@ -98,6 +94,7 @@ class MyApp extends StatelessWidget {
               UserProductScreen.routeName: (ctx) => UserProductScreen(),
               EditProductScreen.routeName: (ctx) => EditProductScreen(),
               PaymentScreen.routeName: (ctx) => PaymentScreen(),
+              AddressScreen.routeName: (ctx) => AddressScreen(),
             },
           );
         }));
