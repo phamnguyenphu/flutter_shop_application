@@ -3,8 +3,6 @@
    <application
         android:label="flutter_shop_application"
         android:icon="@mipmap/ic_launcher">
-        <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyCyD4jbFcshYUWrhf1Fiw94DSgRNSwDzQQ"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -38,6 +36,9 @@
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
-            android:value="2" />
+            android:value="2" />        
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCyD4jbFcshYUWrhf1Fiw94DSgRNSwDzQQ"/>
+
     </application>
 </manifest>

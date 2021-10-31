@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/order.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../providers/order.dart';
 import '../widgets/order_item_widget.dart';
@@ -74,14 +75,13 @@ class _OrderScreenState extends State<OrderScreen> {
             children: [
               Container(
                   child: _isLoading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.black,
-                          ),
+                      ? Lottie.asset(
+                          'assets/images/loading_plane_paper.json'
                         )
                       : orderData.listOrdered.length == 0
                           ? Center(
-                              child: Text('No order any in this status', style: Theme.of(context).textTheme.subtitle2),
+                              child: Text('No order any in this status',
+                                  style: Theme.of(context).textTheme.subtitle2),
                             )
                           : ListView.builder(
                               itemBuilder: (ctx, index) => OrderItemWidget(
@@ -99,7 +99,8 @@ class _OrderScreenState extends State<OrderScreen> {
                         )
                       : orderData.listPacked.length == 0
                           ? Center(
-                              child: Text('No order any in this status', style: Theme.of(context).textTheme.subtitle2),
+                              child: Text('No order any in this status',
+                                  style: Theme.of(context).textTheme.subtitle2),
                             )
                           : ListView.builder(
                               itemBuilder: (ctx, index) => OrderItemWidget(
@@ -117,7 +118,8 @@ class _OrderScreenState extends State<OrderScreen> {
                         )
                       : orderData.listIntransit.length == 0
                           ? Center(
-                              child: Text('No order any in this status', style: Theme.of(context).textTheme.subtitle2),
+                              child: Text('No order any in this status',
+                                  style: Theme.of(context).textTheme.subtitle2),
                             )
                           : ListView.builder(
                               itemBuilder: (ctx, index) => OrderItemWidget(
@@ -135,7 +137,8 @@ class _OrderScreenState extends State<OrderScreen> {
                         )
                       : orderData.listDelivered.length == 0
                           ? Center(
-                              child: Text('No order any in this status', style: Theme.of(context).textTheme.subtitle2),
+                              child: Text('No order any in this status',
+                                  style: Theme.of(context).textTheme.subtitle2),
                             )
                           : ListView.builder(
                               itemBuilder: (ctx, index) => OrderItemWidget(
@@ -153,7 +156,8 @@ class _OrderScreenState extends State<OrderScreen> {
                         )
                       : orderData.listCanceled.length == 0
                           ? Center(
-                              child: Text('No order any in this status', style: Theme.of(context).textTheme.subtitle2),
+                              child: Text('No order any in this status',
+                                  style: Theme.of(context).textTheme.subtitle2),
                             )
                           : ListView.builder(
                               itemBuilder: (ctx, index) => OrderItemWidget(

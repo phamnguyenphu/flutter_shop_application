@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/screens/address/map_google.dart';
 import 'package:sizer/sizer.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:line_awesome_icons/line_awesome_icons.dart';
@@ -133,6 +134,13 @@ class _CreateAddressState extends State<CreateAddress> {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderSide: BorderSide(width: 2),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.location_on),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (ctx) => MapScreen()));
+                        },
                       ),
                       prefixIcon: Container(
                           child: new Icon(

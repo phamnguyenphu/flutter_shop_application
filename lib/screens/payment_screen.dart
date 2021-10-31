@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/cart.dart';
 import 'package:flutter_shop_application/providers/order.dart';
 import 'package:flutter_shop_application/screens/address_screen.dart';
+import 'package:flutter_shop_application/screens/order_screen.dart';
 import 'package:flutter_shop_application/widgets/address_item_widget.dart';
 import 'package:flutter_shop_application/widgets/payment_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -16,8 +18,21 @@ class PaymentScreen extends StatefulWidget {
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class _PaymentScreenState extends State<PaymentScreen>
+    with TickerProviderStateMixin {
+  late final AnimationController _controller;
   bool _isLoading = false;
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
@@ -30,8 +45,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
       body: _isLoading
           ? Center(
-              child: CircularProgressIndicator(
-              color: Theme.of(context).primaryColor,
+              child: Lottie.asset(
+              'assets/images/loading_shop.json',
+              controller: _controller,
+              onLoaded: (composition) {
+                // Configure the AnimationController with the duration of the
+                // Lottie file and start the animation.
+                _controller
+                  ..duration = composition.duration
+                  ..forward();
+              },
             ))
           : Container(
               child: Column(
@@ -261,7 +284,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 setState(() {
                                   _isLoading = false;
                                 });
-                                Navigator.of(context).pop();
+                                Navigator.of(context).pushReplacementNamed(
+                                    OrderScreen.routeName);
                                 cart.clearCart();
                               },
                               child: Text(

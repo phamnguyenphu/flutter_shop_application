@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/address.dart';
+import 'package:flutter_shop_application/Utils/.env.dart';
 import 'package:http/http.dart' as http;
 
 class Addresses with ChangeNotifier {
@@ -31,8 +32,7 @@ class Addresses with ChangeNotifier {
   // }
 
   Future<void> deleteProduct(String id) async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/addresses/$id.json');
+    final url = Uri.parse('${baseURL}addresses/$id.json');
     final existingAddressIndex =
         _addresses.indexWhere((element) => element.id == id);
     Address? existingAddress = _addresses[existingAddressIndex];
@@ -48,8 +48,7 @@ class Addresses with ChangeNotifier {
   }
 
   Future<void> fetchProducts() async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products.json');
+    final url = Uri.parse('${baseURL}products.json');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -76,8 +75,7 @@ class Addresses with ChangeNotifier {
 
   Future<void> updateStatus() async {
     final id = _addresses.firstWhere((element) => element.status == true).id;
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/addresses/$id.json');
+    final url = Uri.parse('${baseURL}addresses/$id.json');
     final response = await http.patch(
       url,
       body: json.encode({'status': false}),
@@ -87,8 +85,7 @@ class Addresses with ChangeNotifier {
 
   Future<void> updateAddress(String id, Address address) async {
     final indexAddress = _addresses.indexWhere((element) => element.id == id);
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/addresses/$id.json');
+    final url = Uri.parse('${baseURL}addresses/$id.json');
     try {
       if (address.status) {
         updateStatus();
@@ -111,8 +108,7 @@ class Addresses with ChangeNotifier {
   }
 
   Future<void> addAddress(Address address) async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/addresses');
+    final url = Uri.parse('${baseURL}addresses');
     try {
       if (address.status) {
         updateStatus();

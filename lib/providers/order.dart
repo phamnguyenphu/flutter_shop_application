@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter_shop_application/Utils/.env.dart';
 import 'package:flutter/foundation.dart';
 import 'cart_item.dart';
 import 'order_item.dart';
@@ -47,8 +47,7 @@ class Order with ChangeNotifier {
   // }
 
   Future<void> deleteOrder(String id) async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders/$id.json');
+    final url = Uri.parse('${baseURL}orders/$id.json');
     final existingOrderIndex =
         _listOrdered.indexWhere((element) => element.id == id);
     OrderItem? existingOrder = orders[existingOrderIndex];
@@ -64,8 +63,7 @@ class Order with ChangeNotifier {
   }
 
   Future<void> cancelOrder(String id) async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders/$id.json');
+    final url = Uri.parse('${baseURL}orders/$id.json');
     try {
       final response =
           await http.patch(url, body: json.encode({'status': 'Cancel'}));
@@ -84,8 +82,7 @@ class Order with ChangeNotifier {
   }
 
   Future<void> fetchOrder() async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders.json');
+    final url = Uri.parse('${baseURL}orders.json');
     final response = await http.get(url);
     final List<OrderItem> loadingOrder = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -131,8 +128,7 @@ class Order with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cart, double totalAmount) async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders.json');
+    final url = Uri.parse('${baseURL}orders.json');
     final time = DateTime.now();
     if (cart.isEmpty && totalAmount == 0) {
       return;

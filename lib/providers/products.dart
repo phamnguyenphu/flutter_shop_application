@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter_shop_application/Utils/.env.dart';
 import 'package:flutter/material.dart';
 import 'product.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +21,7 @@ class Products with ChangeNotifier {
 
   Future<void> fetchProducts() async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products.json');
+        '${baseURL}products.json');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -67,7 +67,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products.json');
+        '${baseURL}products.json');
     try {
       final response = await http.post(
         url,
@@ -106,7 +106,7 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final indexProduct = _items.indexWhere((element) => element.id == id);
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products/$id.json');
+        '${baseURL}products/$id.json');
     await http.patch(
       url,
       body: json.encode({
@@ -126,7 +126,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products/$id.json');
+        '${baseURL}products/$id.json');
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     Product? existingProduct = _items[existingProductIndex];
