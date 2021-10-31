@@ -13,8 +13,12 @@ class Order with ChangeNotifier {
   List<OrderItem> _listDelivered = [];
 
   String? _authToken;
+  String? _userId;
 
-  set authToken(String authToken) => _authToken = authToken;
+  void update(String authToken, String userId) {
+    _authToken = authToken;
+    _userId = userId;
+}
 
   List<OrderItem> get orders {
     return [..._orders];
@@ -44,7 +48,7 @@ class Order with ChangeNotifier {
 
   Future<void> deleteOrder(String id) async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders/$id.json?auth=$_authToken');
+        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders/user-$_userId/$id.json?auth=$_authToken');
     final existingOrderIndex =
         _listOrdered.indexWhere((element) => element.id == id);
     OrderItem? existingOrder = orders[existingOrderIndex];
@@ -61,7 +65,7 @@ class Order with ChangeNotifier {
 
   Future<void> fetchOrder() async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders.json?auth=$_authToken');
+        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders/user-$_userId.json?auth=$_authToken');
     final response = await http.get(url);
     final List<OrderItem> loadingOrder = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -97,7 +101,7 @@ class Order with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cart, double totalAmount) async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders.json?auth=$_authToken');
+        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders/user-$_userId.json?auth=$_authToken');
     final time = DateTime.now();
     if (cart.isEmpty && totalAmount == 0) {
       return;
