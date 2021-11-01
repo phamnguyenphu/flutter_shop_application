@@ -15,7 +15,7 @@ class Order with ChangeNotifier {
   String? _authToken;
   String? _userId;
 
-  void update(String authToken, String userId) {
+  void update(String? authToken, String? userId) {
     _authToken = authToken;
     _userId = userId;
 }

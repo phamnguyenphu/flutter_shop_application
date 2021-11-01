@@ -11,7 +11,7 @@ class Products with ChangeNotifier {
   String? _userId;
 
 
-  void update(String authToken, String userId){
+  void update(String? authToken, String? userId){
     _authToken = authToken;
     _userId = userId;
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
 import 'package:flutter_shop_application/screens/user_product_screen.dart';
+import 'package:provider/provider.dart';
 
 class DrawerScreen extends StatelessWidget {
   const DrawerScreen({Key? key}) : super(key: key);
@@ -67,6 +69,9 @@ class DrawerScreen extends StatelessWidget {
                 ListTile(
                   leading: Icon(Icons.logout),
                   title: Text('Log out'),
+                  onTap: (){
+                    Provider.of<Auth>(context, listen: false).logOut();
+                  },
                 ),
               ],
             ),
