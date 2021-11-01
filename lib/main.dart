@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/providers/cart.dart';
+import 'package:flutter_shop_application/screens/auth_screen.dart';
 import 'package:flutter_shop_application/screens/cart_screen.dart';
 import 'package:flutter_shop_application/screens/drawer_screen.dart';
 import 'package:flutter_shop_application/screens/edit_product_screen.dart';
@@ -25,18 +27,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (ctx) => Products(),
-          ),
-          ChangeNotifierProvider(
-            create: (ctx) => Cart(),
-          ),
-          ChangeNotifierProvider(
-            create: (ctx) => Order(),
-          ),
-        ],
-        child: Sizer(builder: (context, orientation, deviceType) {
+      providers: [
+        ChangeNotifierProvider(
+          create: (ctx) => Auth(),
+        ),
+        ChangeNotifierProxyProvider<Auth, Products>(
+          create: (_) => Products(),
+          update: (_, auth, previousProducts) => previousProducts!..update(auth.token, auth.userId)
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) => Cart(),
+        ),
+        ChangeNotifierProxyProvider<Auth, Order>(
+          create: (_) => Order(),
+          update: (_, auth, previousOrder) => previousOrder!..update(auth.token, auth.userId)
+        ),
+      ],
+      child: Consumer<Auth>(
+        builder: (ctx, auth, _) =>
+            Sizer(builder: (context, orientation, deviceType) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'MyShop',
@@ -73,16 +82,16 @@ class MyApp extends StatelessWidget {
                 centerTitle: true,
               ),
             ),
-            home:
-                // AuthenScreen(),
-                Scaffold(
-              body: Stack(
-                children: [
-                  DrawerScreen(),
-                  ProductsOverviewScreen(),
-                ],
-              ),
-            ),
+            home: auth.isAuth
+                ? Scaffold(
+                    body: Stack(
+                      children: [
+                        DrawerScreen(),
+                        ProductsOverviewScreen(),
+                      ],
+                    ),
+                  )
+                : AuthenScreen(),
             routes: {
               ProductsOverviewScreen.routeName: (ctx) =>
                   ProductsOverviewScreen(),
@@ -93,6 +102,8 @@ class MyApp extends StatelessWidget {
               EditProductScreen.routeName: (ctx) => EditProductScreen(),
             },
           );
-        }));
+        }),
+      ),
+    );
   }
 }
