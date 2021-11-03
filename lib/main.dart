@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/providers/cart.dart';
+import 'package:flutter_shop_application/providers/directions_repository.dart';
 import 'package:flutter_shop_application/screens/address_screen.dart';
 import 'package:flutter_shop_application/screens/cart_screen.dart';
 import 'package:flutter_shop_application/screens/drawer_screen.dart';
@@ -37,11 +39,17 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (ctx) => Order(),
           ),
+          ChangeNotifierProvider(
+            create: (ctx) => DirectionsRepository(),
+          ),
+          ChangeNotifierProvider(
+            create: (ctx) => Addresses(),
+          ),
         ],
         child: Sizer(builder: (context, orientation, deviceType) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'MyShop',
+            title: 'Shoes Shop',
             theme: ThemeData(
               canvasColor: Colors.white,
               primarySwatch: Colors.orange,

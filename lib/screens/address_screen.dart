@@ -1,26 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/address.dart';
+import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/screens/address/create_address.dart';
+import 'package:flutter_shop_application/screens/payment_screen.dart';
 import 'package:flutter_shop_application/widgets/address_item_widget.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import 'address/edit_address.dart';
 
-class AddressScreen extends StatelessWidget {
+class AddressScreen extends StatefulWidget {
   static const routeName = "/address-screen";
   const AddressScreen({Key? key}) : super(key: key);
 
   @override
+  State<AddressScreen> createState() => _AddressScreenState();
+}
+
+class _AddressScreenState extends State<AddressScreen> {
+  bool _isLoading = false;
+
+  // @override
+  // void initState() {
+  //   Future.delayed(Duration.zero).then((_) async {
+  //     setState(() {
+  //       _isLoading = true;
+  //     });
+  //     await Provider.of<Addresses>(context, listen: false).fetchAddresss();
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   });
+  //   super.initState();
+  // }
+
+  @override
   Widget build(BuildContext context) {
-    bool status = true;
+    final itemData = Provider.of<Addresses>(context).addresses;
     return Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context)
+                  .pushReplacementNamed(PaymentScreen.routeName);
+            },
+          ),
           actions: [
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (ctx) => CreateAddress()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (ctx) => CreateAddress(
+                          address: '',
+                        )));
               },
             ),
           ],
@@ -29,103 +64,105 @@ class AddressScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.subtitle1,
           ),
         ),
-        body: ListView.builder(
-          itemBuilder: (ctx, index) => Slidable(
-              actionExtentRatio: 0.2,
-              actionPane: SlidableStrechActionPane(),
-              child: Card(
-                child: Stack(
-                  children: [
-                    AddressItemWidget(
-                      name: 'Trần Thái Tuấn',
-                      phoneNumber: '(+84) 338671454',
-                      street: 'số nhà 206',
-                      wards: 'xã Đức Hòa Hạ',
-                      district: 'huyện Đức Hòa',
-                      city: 'Long An',
-                      handle: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => EditAddress(
-                                  name: 'Chopper',
-                                  phoneNumber: '0338671454',
-                                  address: 'xã Đức Hòa Hạ',
-                                  defaultStatus: true,
-                                )));
-                      },
+        body: _isLoading
+            ? Center(
+                child: Lottie.asset('assets/images/loading_plane_paper.json'))
+            : ListView.builder(
+                itemBuilder: (ctx, i) => Slidable(
+                    actionExtentRatio: 0.2,
+                    actionPane: SlidableStrechActionPane(),
+                    child: Card(
+                      child: Stack(
+                        children: [
+                          AddressItemWidget(
+                            name: itemData[i].fullName,
+                            phoneNumber: itemData[i].phoneNumber,
+                            address: itemData[i].address,
+                            handle: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (ctx) => EditAddress(
+                                        id: itemData[i].id,
+                                        name: itemData[i].fullName,
+                                        phoneNumber: itemData[i].phoneNumber,
+                                        address: itemData[i].address,
+                                        defaultStatus: itemData[i].status,
+                                      )));
+                            },
+                          ),
+                          itemData[i].status == false
+                              ? Container()
+                              : Positioned(
+                                  child: Text('Default',
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 10.sp,
+                                          letterSpacing: 0.5,
+                                          fontWeight: FontWeight.normal)),
+                                  top: 1.5.h,
+                                  right: 8.w),
+                        ],
+                      ),
                     ),
-                    status == false
-                        ? Container()
-                        : Positioned(
-                            child: Text('Default',
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 10.sp,
-                                    letterSpacing: 0.5,
-                                    fontWeight: FontWeight.normal)),
-                            top: 1.5.h,
-                            right: 8.w),
-                  ],
-                ),
-              ),
-              secondaryActions: [
-                IconSlideAction(
-                    caption: "Edit",
-                    color: Colors.yellow,
-                    icon: Icons.edit,
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (ctx) => EditAddress(
-                                name: 'Chopper',
-                                phoneNumber: '0338671454',
-                                address: 'xã Đức Hòa Hạ',
-                                defaultStatus: true,
-                              )));
-                    }),
-                IconSlideAction(
-                    caption: "Delete",
-                    color: Colors.red,
-                    icon: Icons.delete,
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                                elevation: 5.0,
-                                backgroundColor: Colors.white,
-                                title: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.warning_rounded,
-                                      size: 20.0,
-                                      color: Theme.of(context).errorColor,
-                                    ),
-                                    SizedBox(
-                                      width: 15.0,
-                                    ),
-                                    Text('Are you sure?')
-                                  ],
-                                ),
-                                content: Text(
-                                    'Do you want to remove the item from the cart?'),
-                                actions: [
-                                  // ignore: deprecated_member_use
-                                  FlatButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(false);
-                                      },
-                                      child: const Text('No')),
-                                  // ignore: deprecated_member_use
-                                  FlatButton(
-                                      onPressed: () {
-                                        // cart.removeItem(cart.items.keys
-                                        //     .toList()[index]);
-                                        Navigator.of(context).pop(true);
-                                      },
-                                      child: const Text('Yes')),
-                                ],
-                              ));
-                    }),
-              ]),
-          itemCount: 10,
-        ));
+                    secondaryActions: [
+                      IconSlideAction(
+                          caption: "Edit",
+                          color: Colors.yellow,
+                          icon: Icons.edit,
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (ctx) => EditAddress(
+                                      id: itemData[i].id,
+                                      name: itemData[i].fullName,
+                                      phoneNumber: itemData[i].phoneNumber,
+                                      address: itemData[i].address,
+                                      defaultStatus: itemData[i].status,
+                                    )));
+                          }),
+                      IconSlideAction(
+                          caption: "Delete",
+                          color: Colors.red,
+                          icon: Icons.delete,
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                      elevation: 5.0,
+                                      backgroundColor: Colors.white,
+                                      title: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.warning_rounded,
+                                            size: 20.0,
+                                            color: Theme.of(context).errorColor,
+                                          ),
+                                          SizedBox(
+                                            width: 15.0,
+                                          ),
+                                          Text('Are you sure?')
+                                        ],
+                                      ),
+                                      content: Text(
+                                          'Do you want to remove the item from the cart?'),
+                                      actions: [
+                                        // ignore: deprecated_member_use
+                                        FlatButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop(false);
+                                            },
+                                            child: const Text('No')),
+                                        // ignore: deprecated_member_use
+                                        FlatButton(
+                                            onPressed: () {
+                                              // cart.removeItem(cart.items.keys
+                                              //     .toList()[index]);
+                                              Navigator.of(context).pop(true);
+                                            },
+                                            child: const Text('Yes')),
+                                      ],
+                                    ));
+                          }),
+                    ]),
+                itemCount: itemData.length,
+              ));
   }
 }

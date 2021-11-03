@@ -1,17 +1,21 @@
 class Address {
   final String id;
-  final String street;
-  final String wards;
-  final String district;
-  final String city;
+  final String address;
+  final String fullName;
+  final String phoneNumber;
+  final String idUser;
+  final String distance;
   bool status;
 
-  Address(
-      {required this.id,
-      required this.street,
-      required this.wards,
-      required this.district,
-      required this.city,
-      required this.status
-      });
+  Address({
+    required this.id,
+    required this.address,
+    required this.idUser,
+    required this.distance,
+    required this.status,
+    required this.fullName,
+    required this.phoneNumber,
+  });
+
+  void dispose() {}
 }

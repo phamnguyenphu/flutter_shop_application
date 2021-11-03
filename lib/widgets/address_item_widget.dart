@@ -4,19 +4,13 @@ import 'package:sizer/sizer.dart';
 class AddressItemWidget extends StatelessWidget {
   final String name;
   final String phoneNumber;
-  final String street;
-  final String wards;
-  final String district;
-  final String city;
+  final String address;
   final Function() handle;
   const AddressItemWidget({
     Key? key,
     required this.name,
     required this.phoneNumber,
-    required this.street,
-    required this.wards,
-    required this.district,
-    required this.city,
+    required this.address,
     required this.handle,
   }) : super(key: key);
 
@@ -52,10 +46,15 @@ class AddressItemWidget extends StatelessWidget {
                               text: phoneNumber,
                               style: Theme.of(context).textTheme.subtitle2),
                         ])),
-                        Text(street,
-                            style: Theme.of(context).textTheme.subtitle2),
-                        Text(wards + ', ' + district + ', ' + city,
-                            style: Theme.of(context).textTheme.subtitle2)
+                        Container(
+                          width: 80.w,
+                          child: Text(
+                            address,
+                            maxLines: 2,
+                            style: Theme.of(context).textTheme.subtitle2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ])),
                 ],
               ),

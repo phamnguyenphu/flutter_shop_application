@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shop_application/screens/address/directions_model.dart';
-import 'package:flutter_shop_application/screens/address/directions_repository.dart';
+import 'package:flutter_shop_application/screens/address/create_address.dart';
+import 'package:flutter_shop_application/providers/directions_model.dart';
+import 'package:flutter_shop_application/providers/directions_repository.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'edit_address.dart';
+
 class MapScreen extends StatefulWidget {
+  final bool isCreate;
+  final String name;
+  final String phoneNumber;
+  final bool defaultStatus;
+
+  const MapScreen(
+      {Key? key,
+      required this.isCreate,
+      required this.name,
+      required this.phoneNumber,
+      required this.defaultStatus})
+      : super(key: key);
   @override
   _MapScreenState createState() => _MapScreenState();
 }
@@ -40,6 +55,26 @@ class _MapScreenState extends State<MapScreen> {
         actions: [
           if (_destination != null)
             TextButton(
+              onPressed: () => {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (ctx) => widget.isCreate == true
+                        ? CreateAddress(address: _info!.endAddress)
+                        : EditAddress(
+                            id: '1',
+                            address: _info!.endAddress,
+                            phoneNumber: widget.phoneNumber,
+                            defaultStatus: widget.defaultStatus,
+                            name: widget.name,
+                          )))
+              },
+              style: TextButton.styleFrom(
+                primary: Colors.greenAccent,
+                textStyle: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              child: const Text('ACCEPT'),
+            ),
+          if (_destination != null)
+            TextButton(
               onPressed: () => _googleMapController!.animateCamera(
                 CameraUpdate.newCameraPosition(
                   CameraPosition(
@@ -54,7 +89,7 @@ class _MapScreenState extends State<MapScreen> {
                 textStyle: const TextStyle(fontWeight: FontWeight.w600),
               ),
               child: const Text('DEST'),
-            )
+            ),
         ],
       ),
       body: Stack(
@@ -65,9 +100,7 @@ class _MapScreenState extends State<MapScreen> {
             zoomControlsEnabled: false,
             initialCameraPosition: _initialCameraPosition,
             onMapCreated: (controller) => _googleMapController = controller,
-            markers: {
-              if (_destination != null) _destination!
-            },
+            markers: {if (_destination != null) _destination!},
             onTap: _addMarker,
           ),
           if (_info != null)

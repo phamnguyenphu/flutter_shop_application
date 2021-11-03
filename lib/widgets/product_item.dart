@@ -27,8 +27,9 @@ class ProductItem extends StatelessWidget {
                 arguments: product.id);
           },
           child: GridTile(
-            child: Image.network(
-              product.imageUrl,
+            child: FadeInImage.assetNetwork(
+              placeholder: 'assets/images/shoe.gif',
+              image: product.imageUrl,
               fit: BoxFit.cover,
             ),
             footer: GridTileBar(
@@ -42,8 +43,8 @@ class ProductItem extends StatelessWidget {
                   // ignore: deprecated_member_use
                   color: Theme.of(context).accentColor,
                   icon: value.isFavorite
-                      ? Icon(Icons.favorite,color:Colors.red)
-                      : Icon(Icons.favorite_border,color:Colors.red),
+                      ? Icon(Icons.favorite, color: Colors.red)
+                      : Icon(Icons.favorite_border, color: Colors.red),
                   onPressed: () {
                     value.toggleFavorite();
                   },

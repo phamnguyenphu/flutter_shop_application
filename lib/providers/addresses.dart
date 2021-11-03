@@ -11,27 +11,7 @@ class Addresses with ChangeNotifier {
     return [..._addresses];
   }
 
-  //  Future<void> toggleStatus(String id) async {
-  //   final address = _addresses.firstWhere((element) => element.id == id);
-  //   final oldStatus = address.status;
-  //   address.status = !address.status;
-  //   notifyListeners();
-  //   final url = Uri.parse(
-  //       'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/addressese/$id.json');
-  //   try {
-  //     final response =
-  //         await http.patch(url, body: json.encode({'status': address.status}));
-  //     if (response.statusCode >= 400) {
-  //       address.status = oldStatus;
-  //       notifyListeners();
-  //     }
-  //   } catch (error) {
-  //     address.status = oldStatus;
-  //     notifyListeners();
-  //   }
-  // }
-
-  Future<void> deleteProduct(String id) async {
+  Future<void> deleteAddress(String id) async {
     final url = Uri.parse('${baseURL}addresses/$id.json');
     final existingAddressIndex =
         _addresses.indexWhere((element) => element.id == id);
@@ -47,8 +27,17 @@ class Addresses with ChangeNotifier {
     existingAddress = null;
   }
 
-  Future<void> fetchProducts() async {
-    final url = Uri.parse('${baseURL}products.json');
+  Address? findDefaultAddress() {
+    final address = _addresses.firstWhere((address) => address.status == true);
+    // ignore: unnecessary_null_comparison
+    if (address == null) {
+      return null;
+    }
+    return address;
+  }
+
+  Future<void> fetchAddresss() async {
+    final url = Uri.parse('${baseURL}addresses.json');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -60,10 +49,11 @@ class Addresses with ChangeNotifier {
       extractedData.forEach((addressId, addressData) {
         loadingAddresses.add(Address(
             id: addressId,
-            street: addressData['street'],
-            wards: addressData['wards'],
-            district: addressData['district'],
-            city: addressData['city'],
+            address: addressData['address'],
+            idUser: addressData['idUser'],
+            fullName: addressData['fullName'],
+            phoneNumber: addressData['phoneNumber'],
+            distance: addressData['distances'],
             status: addressData['status']));
       });
       _addresses = loadingAddresses;
@@ -74,13 +64,18 @@ class Addresses with ChangeNotifier {
   }
 
   Future<void> updateStatus() async {
-    final id = _addresses.firstWhere((element) => element.status == true).id;
+    final id = _addresses.firstWhere((address) => address.status == true).id;
     final url = Uri.parse('${baseURL}addresses/$id.json');
     final response = await http.patch(
       url,
       body: json.encode({'status': false}),
     );
-    if (response.statusCode == 200) {}
+    if (response.statusCode == 200) {
+      // ignore: unused_local_variable
+      final index = _addresses.indexWhere((address) => address.id == id);
+      _addresses[index].status = false;
+      notifyListeners();
+    }
   }
 
   Future<void> updateAddress(String id, Address address) async {
@@ -93,10 +88,11 @@ class Addresses with ChangeNotifier {
       await http.patch(
         url,
         body: json.encode({
-          "street": address.street,
-          "wards": address.wards,
-          "district": address.district,
-          "city": address.city,
+          "address": address.address,
+          "idUser": address.idUser,
+          "distance": address.distance,
+          "fullName": address.fullName,
+          "phoneNumber": address.phoneNumber,
           "status": address.status
         }),
       );
@@ -108,7 +104,7 @@ class Addresses with ChangeNotifier {
   }
 
   Future<void> addAddress(Address address) async {
-    final url = Uri.parse('${baseURL}addresses');
+    final url = Uri.parse('${baseURL}addresses.json');
     try {
       if (address.status) {
         updateStatus();
@@ -116,10 +112,11 @@ class Addresses with ChangeNotifier {
       }
       final response = await http.post(url,
           body: json.encode({
-            "street": address.street,
-            "wards": address.wards,
-            "district": address.district,
-            "city": address.city,
+            "address": address.address,
+            "idUser": address.idUser,
+            "distance": address.distance,
+            "fullName": address.fullName,
+            "phoneNumber": address.phoneNumber,
             "status": address.status
           }));
 
@@ -128,10 +125,11 @@ class Addresses with ChangeNotifier {
             0,
             Address(
               id: json.decode(response.body)['name'],
-              street: address.street,
-              wards: address.wards,
-              district: address.district,
-              city: address.city,
+              address: address.address,
+              idUser: address.idUser,
+              fullName: address.fullName,
+              phoneNumber: address.phoneNumber,
+              distance: address.distance,
               status: address.status,
             ));
       }
