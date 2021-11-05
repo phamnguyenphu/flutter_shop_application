@@ -7,6 +7,7 @@ import 'package:flutter_shop_application/screens/drawer_screen.dart';
 import 'package:flutter_shop_application/screens/edit_product_screen.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
 import 'package:flutter_shop_application/screens/products_overview_screen.dart';
+import 'package:flutter_shop_application/screens/splash/splash_screen.dart';
 import 'package:flutter_shop_application/screens/user_product_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -91,10 +92,11 @@ class MyApp extends StatelessWidget {
                       ],
                     ),
                   )
-                : AuthenScreen(),
+                : SplashScreen(),
             routes: {
               ProductsOverviewScreen.routeName: (ctx) =>
                   ProductsOverviewScreen(),
+              AuthenScreen.routeName: (ctx) => AuthenScreen(),
               ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
               CartScreen.routeName: (ctx) => CartScreen(),
               OrderScreen.routeName: (ctx) => OrderScreen(),
