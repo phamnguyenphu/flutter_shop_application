@@ -10,13 +10,21 @@ import 'package:flutter_shop_application/screens/products_overview_screen.dart';
 import 'package:flutter_shop_application/screens/splash/splash_screen.dart';
 import 'package:flutter_shop_application/screens/user_product_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import './screens/product_detail_screen.dart';
 import './providers/products.dart';
 import './providers/order.dart';
 import 'package:flutter/services.dart';
 
-void main() {
+int? initScreen;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  initScreen = await preferences.getInt('initScreen');
+  await preferences.setInt('initScreen', 1);
+
   runApp(MyApp());
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
@@ -33,16 +41,16 @@ class MyApp extends StatelessWidget {
           create: (ctx) => Auth(),
         ),
         ChangeNotifierProxyProvider<Auth, Products>(
-          create: (_) => Products(),
-          update: (_, auth, previousProducts) => previousProducts!..update(auth.token, auth.userId)
-        ),
+            create: (_) => Products(),
+            update: (_, auth, previousProducts) =>
+                previousProducts!..update(auth.token, auth.userId)),
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
         ),
         ChangeNotifierProxyProvider<Auth, Order>(
-          create: (_) => Order(),
-          update: (_, auth, previousOrder) => previousOrder!..update(auth.token, auth.userId)
-        ),
+            create: (_) => Order(),
+            update: (_, auth, previousOrder) =>
+                previousOrder!..update(auth.token, auth.userId)),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) =>
@@ -83,16 +91,29 @@ class MyApp extends StatelessWidget {
                 centerTitle: true,
               ),
             ),
-            home: auth.isAuth
-                ? Scaffold(
-                    body: Stack(
-                      children: [
-                        DrawerScreen(),
-                        ProductsOverviewScreen(),
-                      ],
-                    ),
-                  )
-                : SplashScreen(),
+            home: auth.isSplash
+                ? (initScreen == 0 || initScreen == null)
+                    ? SplashScreen()
+                    : auth.isAuth
+                        ? Scaffold(
+                            body: Stack(
+                              children: [
+                                DrawerScreen(),
+                                ProductsOverviewScreen(),
+                              ],
+                            ),
+                          )
+                        : AuthenScreen()
+                : auth.isAuth
+                    ? Scaffold(
+                        body: Stack(
+                          children: [
+                            DrawerScreen(),
+                            ProductsOverviewScreen(),
+                          ],
+                        ),
+                      )
+                    : AuthenScreen(),
             routes: {
               ProductsOverviewScreen.routeName: (ctx) =>
                   ProductsOverviewScreen(),
@@ -102,6 +123,7 @@ class MyApp extends StatelessWidget {
               OrderScreen.routeName: (ctx) => OrderScreen(),
               UserProductScreen.routeName: (ctx) => UserProductScreen(),
               EditProductScreen.routeName: (ctx) => EditProductScreen(),
+              SplashScreen.routeName: (ctx) => SplashScreen(),
             },
           );
         }),

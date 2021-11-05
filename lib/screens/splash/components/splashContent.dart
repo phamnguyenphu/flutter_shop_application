@@ -15,16 +15,21 @@ class SplashContent extends StatelessWidget {
       children: <Widget>[
         Spacer(),
         Text(
-          "TOKOTO",
+          "CHALLENGE",
           style: TextStyle(
             fontSize: getProportionateScreenWidth(36),
             color: Color.fromRGBO(143, 148, 251, 1),
             fontWeight: FontWeight.bold,
+            letterSpacing: 2.0,
           ),
         ),
-        Text(
-          text!,
-          textAlign: TextAlign.center,
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Text(
+            text!,
+            textAlign: TextAlign.center,
+            style: TextStyle(letterSpacing: 1.5),
+          ),
         ),
         Spacer(flex: 2),
         Image.asset(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/screens/splash/components/size_config.dart';
 import 'package:flutter_shop_application/screens/splash/components/splashContent.dart';
+import 'package:provider/provider.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -11,12 +13,11 @@ class _BodyState extends State<Body> {
   int currentPage = 0;
   List<Map<String, String>> splashData = [
     {
-      "text": "Welcome to Tokoto, Let’s shop!",
+      "text": "Welcome to Challenge, Let’s shop!",
       "image": "assets/images/splash_1.png"
     },
     {
-      "text":
-          "We help people conect with store \naround United State of America",
+      "text": "We help people conect with store \naround Ho Chi Minh City",
       "image": "assets/images/splash_2.png"
     },
     {
@@ -68,9 +69,9 @@ class _BodyState extends State<Body> {
                       height: 50,
                       child: TextButton(
                         child: Text('Continue'),
-
                         onPressed: () {
-                          Navigator.of(context).pushReplacementNamed('/auth-screen');
+                          Navigator.of(context)
+                              .pushNamed('/products-overview');
                         },
                         style: TextButton.styleFrom(
                           textStyle: TextStyle(fontSize: 16),
@@ -81,6 +82,13 @@ class _BodyState extends State<Body> {
                           ),
                         ),
                       ),
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        Provider.of<Auth>(context, listen: false).changeSplash();
+                      },
+                      child: Text('Go to Login or Sign Up'),
+                      textColor: Color.fromRGBO(143, 148, 251, 1),
                     ),
                     Spacer(),
                   ],

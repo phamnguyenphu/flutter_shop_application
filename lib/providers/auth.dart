@@ -10,6 +10,7 @@ class Auth with ChangeNotifier {
   DateTime? _expiryDate;
   String? _userId;
   Timer? _authTimer;
+  bool splash = true;
 
   String? get token {
     if (_token != null &&
@@ -18,6 +19,10 @@ class Auth with ChangeNotifier {
       return _token;
     }
     return null;
+  }
+
+  bool get isSplash {
+    return splash == true;
   }
 
   bool get isAuth {
@@ -75,6 +80,11 @@ class Auth with ChangeNotifier {
       _authTimer!.cancel();
       _authTimer = null;
     }
+    notifyListeners();
+  }
+
+  void changeSplash(){
+    splash = false;
     notifyListeners();
   }
 
