@@ -158,6 +158,7 @@ class _EditAddressState extends State<EditAddress> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextFormField(
+                          readOnly: true,
                           onTap: () {
                             showModalBottomSheet(
                                 isScrollControlled: false,
