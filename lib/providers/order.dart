@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter_shop_application/models/.env.dart';
 import 'package:flutter/foundation.dart';
 import 'cart_item.dart';
 import 'order_item.dart';
@@ -11,6 +11,7 @@ class Order with ChangeNotifier {
   List<OrderItem> _listPacked = [];
   List<OrderItem> _listIntransit = [];
   List<OrderItem> _listDelivered = [];
+  List<OrderItem> _listCanceled = [];
 
   String? _authToken;
   String? _userId;
@@ -18,24 +19,31 @@ class Order with ChangeNotifier {
   void update(String? authToken, String? userId) {
     _authToken = authToken;
     _userId = userId;
-}
+  }
 
   List<OrderItem> get orders {
     return [..._orders];
   }
+
   List<OrderItem> get listOrdered {
     return [..._listOrdered];
   }
+
   List<OrderItem> get listPacked {
     return [..._listPacked];
   }
+
   List<OrderItem> get listIntransit {
     return [..._listIntransit];
   }
+
   List<OrderItem> get listDelivered {
     return [..._listDelivered];
   }
 
+  List<OrderItem> get listCanceled {
+    return [..._listCanceled];
+  }
 
   // List<OrderItem> selectOrder(String status) {
   //   _orders.forEach((order) {
@@ -47,8 +55,8 @@ class Order with ChangeNotifier {
   // }
 
   Future<void> deleteOrder(String id) async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders/user-$_userId/$id.json?auth=$_authToken');
+    final url =
+        Uri.parse('${baseURL}orders/user-$_userId/$id.json?auth=$_authToken');
     final existingOrderIndex =
         _listOrdered.indexWhere((element) => element.id == id);
     OrderItem? existingOrder = orders[existingOrderIndex];
@@ -63,9 +71,29 @@ class Order with ChangeNotifier {
     existingOrder = null;
   }
 
+  Future<void> cancelOrder(String id) async {
+    final url =
+        Uri.parse('${baseURL}orders/user-$_userId/$id.json?auth=$_authToken');
+    try {
+      final response =
+          await http.patch(url, body: json.encode({'status': 'Cancel'}));
+      if (response.statusCode == 200) {
+        final existingOrderIndex =
+            _listOrdered.indexWhere((element) => element.id == id);
+        OrderItem? existingOrder = orders[existingOrderIndex];
+        existingOrder.status = "Cancel";
+        _listCanceled.add(existingOrder);
+        _listOrdered.removeAt(existingOrderIndex);
+        notifyListeners();
+      }
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<void> fetchOrder() async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders/user-$_userId.json?auth=$_authToken');
+    final url =
+        Uri.parse('${baseURL}orders/user-$_userId.json?auth=$_authToken');
     final response = await http.get(url);
     final List<OrderItem> loadingOrder = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -92,10 +120,21 @@ class Order with ChangeNotifier {
       ));
     });
     _orders = loadingOrder.reversed.toList();
-    _listOrdered = loadingOrder.reversed.where((order) => order.status == "Ordered").toList();
-    _listPacked = loadingOrder.reversed.where((order) => order.status == "Packed").toList();
-    _listIntransit = loadingOrder.reversed.where((order) => order.status == "In transit").toList();
-    _listDelivered = loadingOrder.reversed.where((order) => order.status == "Delivered").toList();
+    _listOrdered = loadingOrder.reversed
+        .where((order) => order.status == "Ordered")
+        .toList();
+    _listPacked = loadingOrder.reversed
+        .where((order) => order.status == "Packed")
+        .toList();
+    _listIntransit = loadingOrder.reversed
+        .where((order) => order.status == "In transit")
+        .toList();
+    _listDelivered = loadingOrder.reversed
+        .where((order) => order.status == "Delivered")
+        .toList();
+    _listCanceled = loadingOrder.reversed
+        .where((order) => order.status == "Cancel")
+        .toList();
     notifyListeners();
   }
 

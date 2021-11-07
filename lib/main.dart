@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/providers/cart.dart';
 import 'package:flutter_shop_application/screens/auth_screen.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_shop_application/screens/cart_screen.dart';
 import 'package:flutter_shop_application/screens/drawer_screen.dart';
 import 'package:flutter_shop_application/screens/edit_product_screen.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
+import 'package:flutter_shop_application/screens/payment_screen.dart';
 import 'package:flutter_shop_application/screens/products_overview_screen.dart';
 import 'package:flutter_shop_application/screens/user_product_screen.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +16,10 @@ import './screens/product_detail_screen.dart';
 import './providers/products.dart';
 import './providers/order.dart';
 import 'package:flutter/services.dart';
+
+import 'providers/addresses.dart';
+import 'providers/user.dart';
+import 'screens/profile_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,16 +38,28 @@ class MyApp extends StatelessWidget {
           create: (ctx) => Auth(),
         ),
         ChangeNotifierProxyProvider<Auth, Products>(
-          create: (_) => Products(),
-          update: (_, auth, previousProducts) => previousProducts!..update(auth.token, auth.userId)
-        ),
+            create: (_) => Products(),
+            update: (_, auth, previousProducts) =>
+                previousProducts!..update(auth.token, auth.userId)),
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
         ),
         ChangeNotifierProxyProvider<Auth, Order>(
-          create: (_) => Order(),
-          update: (_, auth, previousOrder) => previousOrder!..update(auth.token, auth.userId)
-        ),
+            create: (_) => Order(),
+            update: (_, auth, previousOrder) =>
+                previousOrder!..update(auth.token, auth.userId)),
+        ChangeNotifierProxyProvider<Auth, User>(
+            create: (_) => User(),
+            update: (_, auth, previousOrder) =>
+                previousOrder!..update(auth.token, auth.userId)),
+        ChangeNotifierProxyProvider<Auth, AddressItems>(
+            create: (_) => AddressItems(),
+            update: (_, auth, previousOrder) =>
+                previousOrder!..update(auth.token, auth.userId)),
+        ChangeNotifierProxyProvider<Auth, Addresses>(
+            create: (_) => Addresses(),
+            update: (_, auth, previousOrder) =>
+                previousOrder!..update(auth.token, auth.userId)),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) =>
@@ -83,14 +101,16 @@ class MyApp extends StatelessWidget {
               ),
             ),
             home: auth.isAuth
-                ? Scaffold(
-                    body: Stack(
-                      children: [
-                        DrawerScreen(),
-                        ProductsOverviewScreen(),
-                      ],
-                    ),
-                  )
+                ? auth.isSignIn
+                    ? Scaffold(
+                        body: Stack(
+                          children: [
+                            DrawerScreen(),
+                            ProductsOverviewScreen(),
+                          ],
+                        ),
+                      )
+                    : ProfileScreen(email: auth.email!, isSignUp: true)
                 : AuthenScreen(),
             routes: {
               ProductsOverviewScreen.routeName: (ctx) =>
@@ -100,6 +120,8 @@ class MyApp extends StatelessWidget {
               OrderScreen.routeName: (ctx) => OrderScreen(),
               UserProductScreen.routeName: (ctx) => UserProductScreen(),
               EditProductScreen.routeName: (ctx) => EditProductScreen(),
+              AuthenScreen.routeName: (ctx) => AuthenScreen(),
+              PaymentScreen.routeName: (ctx) => PaymentScreen(),
             },
           );
         }),
