@@ -45,12 +45,12 @@ Padding BuildTextField(
             fontWeight: FontWeight.normal,
             letterSpacing: 0.5,
           ),
-          floatingLabelStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 15,
-            fontWeight: FontWeight.normal,
-            letterSpacing: 0.5,
-          ),
+          // floatingLabelStyle: TextStyle(
+          //   color: Colors.black,
+          //   fontSize: 15,
+          //   fontWeight: FontWeight.normal,
+          //   letterSpacing: 0.5,
+          // ),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(8)),
               borderSide: BorderSide(color: Colors.black, width: 1)),
