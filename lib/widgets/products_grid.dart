@@ -13,18 +13,11 @@ class ProductsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
-    // ignore: unnecessary_null_comparison
-    final List<Product>? searchProducts = keywords == null
-        ? null
-        : Provider.of<Products>(context).searchProducts(keywords);
-    bool searchCheck = searchProducts != null ? true : false;
-    // ignore: unnecessary_null_comparison
-
-    final products = searchCheck
-        ? searchProducts
-        : showFavs
-            ? productsData.itemsFavorites
-            : productsData.items;
+    var products = showFavs ? productsData.itemsFavorites : productsData.items;
+    if (keywords.length > 0) {
+      products =
+          Provider.of<Products>(context).searchProducts(keywords, products);
+    }
     return products.isEmpty
         ? Center(
             child: Text(
