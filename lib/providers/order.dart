@@ -21,6 +21,10 @@ class Order with ChangeNotifier {
     _userId = userId;
   }
 
+  bool get checkUser {
+    return _userId == null;
+  }
+
   List<OrderItem> get orders {
     return [..._orders];
   }

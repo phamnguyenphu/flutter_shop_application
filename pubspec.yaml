@@ -30,9 +30,6 @@ dependencies:
 
   shared_preferences: ^2.0.0
   animate_do: ^2.0.0
-
-
-
   animated_icon_button: ^1.0.2
 
   # The following adds the Cupertino Icons font to your application.

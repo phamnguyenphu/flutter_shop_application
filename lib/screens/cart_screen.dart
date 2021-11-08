@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_statements
 
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/screens/payment_screen.dart';
 import 'package:flutter_shop_application/widgets/cart_item.dart';
 import 'package:provider/provider.dart';
@@ -165,12 +166,13 @@ class OrderButton extends StatefulWidget {
 class _OrderButtonState extends State<OrderButton> {
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<Auth>(context).isAuth;
     // ignore: deprecated_member_use
     return RaisedButton(
       onPressed: () {
-        (widget.cart.totalAmount <= 0)
-            ? null
-            : Navigator.of(context).pushNamed(PaymentScreen.routeName);
+        (widget.cart.totalAmount > 0 && auth == true)
+            ? Navigator.of(context).pushNamed(PaymentScreen.routeName)
+            : null;
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),

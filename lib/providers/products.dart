@@ -10,18 +10,14 @@ class Products with ChangeNotifier {
   String? _authToken;
   String? _userId;
 
-
-  void update(String? authToken, String? userId){
+  void update(String? authToken, String? userId) {
     _authToken = authToken;
     _userId = userId;
   }
 
-
-
   List<Product> get items {
     return [..._items];
   }
-
 
   List<Product> get itemsFavorites {
     return items.where((element) => element.isFavorite).toList();
@@ -33,7 +29,7 @@ class Products with ChangeNotifier {
 
   Future<void> fetchProducts() async {
     var url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products.json?auth=$_authToken');
+        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products.json');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -41,23 +37,40 @@ class Products with ChangeNotifier {
       if (extractedData == null) {
         return;
       }
-      url = Uri.parse(
-          'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/userFavorite/$_userId.json?auth=$_authToken');
-      final favoriteResponse = await http.get(url);
-      final favoriteData = json.decode(favoriteResponse.body);
       final List<Product> loadingProducts = [];
-      extractedData.forEach((productId, productData) {
-        loadingProducts.add(
-          Product(
-            id: productId,
-            title: productData['title'],
-            description: productData['description'],
-            price: productData['price'],
-            imageUrl: productData['imgUrl'],
-            isFavorite: favoriteData == null ? false : favoriteData[productId] ?? null,
-          ),
-        );
-      });
+      if (_userId != null && _authToken != null) {
+        url = Uri.parse(
+            'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/userFavorite/$_userId.json?auth=$_authToken');
+        final favoriteResponse = await http.get(url);
+        final favoriteData = json.decode(favoriteResponse.body);
+        extractedData.forEach((productId, productData) {
+          loadingProducts.add(
+            Product(
+              id: productId,
+              title: productData['title'],
+              description: productData['description'],
+              price: productData['price'],
+              imageUrl: productData['imgUrl'],
+              isFavorite: favoriteData == null
+                  ? false
+                  : favoriteData[productId] ?? null,
+            ),
+          );
+        });
+      } else {
+        extractedData.forEach((productId, productData) {
+          loadingProducts.add(
+            Product(
+              id: productId,
+              title: productData['title'],
+              description: productData['description'],
+              price: productData['price'],
+              imageUrl: productData['imgUrl'],
+              isFavorite: productData['isFavorite'],
+            ),
+          );
+        });
+      }
       _items = loadingProducts;
       notifyListeners();
     } catch (error) {
@@ -65,7 +78,7 @@ class Products with ChangeNotifier {
     }
   }
 
-   List<Product> searchProducts(String name,List<Product> listProducts ) {
+  List<Product> searchProducts(String name, List<Product> listProducts) {
     List<Product> result = [];
     listProducts.forEach((p) {
       var exist = p.title.contains(name);

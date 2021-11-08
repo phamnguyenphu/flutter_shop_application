@@ -1,6 +1,7 @@
 import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/addresses.dart';
+import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/providers/product.dart';
 import 'package:flutter_shop_application/providers/products.dart';
 import 'package:flutter_shop_application/screens/cart_screen.dart';
@@ -9,6 +10,8 @@ import 'package:provider/provider.dart';
 import '../widgets/products_grid.dart';
 import '../providers/cart.dart';
 import 'dart:math';
+
+import 'auth_screen.dart';
 
 class ProductsOverviewScreen extends StatefulWidget {
   static const routeName = "/products-overview";
@@ -57,6 +60,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final auth = Provider.of<Auth>(context).isAuth;
     FocusScopeNode currentFocus = FocusScope.of(context);
     return AnimatedContainer(
         transform: Matrix4.translationValues(xOffset, yOffset, 0)
@@ -94,9 +98,25 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                 duration: Duration(milliseconds: 1000),
                 size: 25,
                 onPressed: () {
-                  setState(() {
-                    _showFavoritesOnly = !_showFavoritesOnly;
-                  });
+                  auth == false
+                      ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: const Text(
+                            'To perform the function please login! Click ->',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          duration: Duration(seconds: 2),
+                          backgroundColor: Color.fromRGBO(252, 207, 218, 1),
+                          action: SnackBarAction(
+                            label: 'LOGIN',
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed(AuthenScreen.routeName);
+                            },
+                          ),
+                        ))
+                      : setState(() {
+                          _showFavoritesOnly = !_showFavoritesOnly;
+                        });
                 },
                 icons: [
                   AnimatedIconItem(
