@@ -29,7 +29,6 @@ class _CreateAddressState extends State<CreateAddress> {
   @override
   Future<void> didChangeDependencies() async {
     if (isInit) {
-      Provider.of<AddressItems>(context, listen: false).deleteItem();
       await Provider.of<AddressItems>(context, listen: false).getDistrict();
     }
     isInit = false;

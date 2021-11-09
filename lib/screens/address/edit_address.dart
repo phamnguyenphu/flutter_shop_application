@@ -51,7 +51,6 @@ class _EditAddressState extends State<EditAddress> {
   @override
   Future<void> didChangeDependencies() async {
     if (_isInit) {
-      Provider.of<AddressItems>(context, listen: false).deleteItem();
       await Provider.of<AddressItems>(context, listen: false).getDistrict();
     }
     _isInit = false;

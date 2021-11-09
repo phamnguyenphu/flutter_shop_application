@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'product.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_shop_application/models/.env.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [];
@@ -90,8 +91,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products.json?auth=$_authToken');
+    final url = Uri.parse('${baseURL}products.json?auth=$_authToken');
     try {
       final response = await http.post(
         url,
@@ -118,8 +118,7 @@ class Products with ChangeNotifier {
 
   Future<void> updateProduct(String id, Product newProduct) async {
     final indexProduct = _items.indexWhere((element) => element.id == id);
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products/$id.json?auth=$_authToken');
+    final url = Uri.parse('${baseURL}products/$id.json?auth=$_authToken');
     await http.patch(
       url,
       body: json.encode({
@@ -134,8 +133,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products/$id.json?auth=$_authToken');
+    final url = Uri.parse('${baseURL}products/$id.json?auth=$_authToken');
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
     Product? existingProduct = _items[existingProductIndex];

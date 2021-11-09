@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/address.dart';
+import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/widgets/sheet_address.dart';
 import 'package:flutter_shop_application/widgets/widget.dart';
 import 'package:intl/intl.dart';
@@ -90,6 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = Provider.of<User>(context).userId;
     final address = Provider.of<AddressItems>(context).item;
     if (address != null) {
       setState(() {
@@ -291,44 +293,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           address: _addressController.text,
                                           fullName: _nameController.text,
                                           avatar: image,
-                                          idUser: user.idUser,
+                                          idUser: userId!,
                                           birthday: _birthdayController.text,
                                         );
-                                        widget.isSignUp
-                                            ? await Provider.of<User>(context,
-                                                    listen: false)
-                                                .addUser(userData)
-                                                .then((value) => Navigator.of(
-                                                        context)
-                                                    .pushReplacement(
-                                                        MaterialPageRoute(
-                                                            builder: (ctx) =>
-                                                                Scaffold(
-                                                                    body: Stack(
-                                                                  children: [
-                                                                    DrawerScreen(),
-                                                                    ProductsOverviewScreen(),
-                                                                  ],
-                                                                )))))
-                                            : await Provider.of<User>(context,
-                                                    listen: false)
-                                                .updateUser(userData)
-                                                .then((value) => {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              SnackBar(
-                                                                  content:
-                                                                      const Text(
-                                                        'Update Profile Success!',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ))),
-                                                      setState(() {
-                                                        isLoading = false;
-                                                      })
-                                                    });
+                                        final address = Address(
+                                            id: '',
+                                            idUser: userId,
+                                            address: _addressController.text,
+                                            fullName: _nameController.text,
+                                            phoneNumber:
+                                                _phoneNumberController.text,
+                                            status: true);
+                                        if (widget.isSignUp) {
+                                          await Provider.of<Addresses>(context,
+                                                  listen: false)
+                                              .addAddress(address);
+                                          await Provider.of<User>(context,
+                                                  listen: false)
+                                              .addUser(userData)
+                                              .then((value) => Navigator.of(
+                                                      context)
+                                                  .pushReplacement(
+                                                      MaterialPageRoute(
+                                                          builder: (ctx) =>
+                                                              Scaffold(
+                                                                  body: Stack(
+                                                                children: [
+                                                                  DrawerScreen(),
+                                                                  ProductsOverviewScreen(),
+                                                                ],
+                                                              )))));
+                                        } else {
+                                          await Provider.of<User>(context,
+                                                  listen: false)
+                                              .updateUser(userData)
+                                              .then((value) => {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                            content: const Text(
+                                                      'Update Profile Success!',
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ))),
+                                                    setState(() {
+                                                      isLoading = false;
+                                                    })
+                                                  });
+                                        }
                                       } catch (e) {
                                         print(e);
                                       }

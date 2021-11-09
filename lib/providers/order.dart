@@ -49,15 +49,6 @@ class Order with ChangeNotifier {
     return [..._listCanceled];
   }
 
-  // List<OrderItem> selectOrder(String status) {
-  //   _orders.forEach((order) {
-  //     if (order.status == status) {
-  //       listOrder.add(order);
-  //     }
-  //   });
-  //   return listOrder;
-  // }
-
   Future<void> deleteOrder(String id) async {
     final url =
         Uri.parse('${baseURL}orders/user-$_userId/$id.json?auth=$_authToken');
@@ -144,7 +135,7 @@ class Order with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cart, double totalAmount) async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders/user-$_userId.json?auth=$_authToken');
+        '${baseURL}orders/user-$_userId.json?auth=$_authToken');
     final time = DateTime.now();
     if (cart.isEmpty && totalAmount == 0) {
       return;

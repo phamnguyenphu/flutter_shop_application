@@ -17,6 +17,7 @@ class DrawerScreen extends StatefulWidget {
 
 class _DrawerScreenState extends State<DrawerScreen> {
   bool isLoading = false;
+
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) async {
@@ -157,11 +158,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                                   Provider.of<Auth>(context,
                                                           listen: false)
                                                       .logOut();
+                                                  Provider.of<User>(context,
+                                                          listen: false)
+                                                      .logout();
                                                   Navigator.of(context)
                                                       .pop(false);
-                                                  // Navigator.of(context)
-                                                  //     .pushReplacementNamed(
-                                                  //         AuthenScreen.routeName);
                                                 },
                                                 child: const Text('Yes')),
                                           ],

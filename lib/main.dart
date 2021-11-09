@@ -27,7 +27,7 @@ int? initScreen;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  initScreen = await preferences.getInt('initScreen');
+  initScreen = preferences.getInt('initScreen');
   await preferences.setInt('initScreen', 1);
 
   runApp(MyApp());
@@ -123,14 +123,7 @@ class MyApp extends StatelessWidget {
                                 )
                               : ProfileScreen(
                                   email: auth.email!, isSignUp: true)
-                          : Scaffold(
-                              body: Stack(
-                                children: [
-                                  DrawerScreen(),
-                                  ProductsOverviewScreen(),
-                                ],
-                              ),
-                            )
+                          : AuthenScreen()
                   : auth.isAuth
                       ? auth.isSignIn
                           ? Scaffold(
@@ -142,14 +135,7 @@ class MyApp extends StatelessWidget {
                               ),
                             )
                           : ProfileScreen(email: auth.email!, isSignUp: true)
-                      : Scaffold(
-                          body: Stack(
-                            children: [
-                              DrawerScreen(),
-                              ProductsOverviewScreen(),
-                            ],
-                          ),
-                        ),
+                      : AuthenScreen(),
               routes: {
                 ProductsOverviewScreen.routeName: (ctx) =>
                     ProductsOverviewScreen(),

@@ -47,7 +47,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
       Provider.of<Products>(context)
           .fetchProducts()
           .then((_) => _isLoading = false);
-      await Provider.of<Addresses>(context, listen: false).fetchAddresss();
+      final isAuth = Provider.of<Auth>(context, listen: false).isAuth;
+      isAuth == true
+          ? await Provider.of<Addresses>(context, listen: false).fetchAddresss()
+          // ignore: unnecessary_statements
+          : null;
     }
     _isInit = false;
     super.didChangeDependencies();
