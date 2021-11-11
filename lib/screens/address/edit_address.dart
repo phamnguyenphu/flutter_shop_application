@@ -40,7 +40,6 @@ class _EditAddressState extends State<EditAddress> {
 
   @override
   void initState() {
-    print(widget.defaultStatus);
     _nameController.text = widget.name;
     _phoneNumberController.text = widget.phoneNumber;
     _addressController.text = widget.address;
@@ -70,7 +69,6 @@ class _EditAddressState extends State<EditAddress> {
             ', thành phố Hồ Chí Minh';
       });
     }
-    final user = Provider.of<User>(context).user;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -221,12 +219,17 @@ class _EditAddressState extends State<EditAddress> {
                           ),
                           Spacer(),
                           Switch(
+                              inactiveThumbColor: Colors.orange,
+                              inactiveTrackColor:
+                                  Colors.orange.withOpacity(0.4),
                               value: defaultStatus,
-                              onChanged: (val) {
-                                setState(() {
-                                  defaultStatus = !defaultStatus;
-                                });
-                              })
+                              onChanged: defaultStatus == true
+                                  ? null
+                                  : (val) {
+                                      setState(() {
+                                        defaultStatus = !defaultStatus;
+                                      });
+                                    })
                         ],
                       ),
                       SizedBox(height: 7.h),

@@ -27,12 +27,15 @@ class _CreateAddressState extends State<CreateAddress> {
   bool _isLoading = false;
   bool isInit = true;
   @override
-  Future<void> didChangeDependencies() async {
-    if (isInit) {
+  void initState() {
+    Future.delayed(Duration.zero).then((_) async {
       await Provider.of<AddressItems>(context, listen: false).getDistrict();
-    }
-    isInit = false;
-    super.didChangeDependencies();
+    });
+    final user = Provider.of<User>(context, listen: false).user;
+    _nameController.text = user.fullName;
+    _phoneNumberController.text = user.phoneNumber;
+    _addressController.text = user.address;
+    super.initState();
   }
 
   @override
@@ -200,6 +203,9 @@ class _CreateAddressState extends State<CreateAddress> {
                           ),
                           Spacer(),
                           Switch(
+                              inactiveThumbColor: Colors.orange,
+                              inactiveTrackColor:
+                                  Colors.orange.withOpacity(0.4),
                               value: defaultStatus,
                               onChanged: (val) {
                                 setState(() {

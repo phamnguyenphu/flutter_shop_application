@@ -89,7 +89,8 @@ class AddressItems with ChangeNotifier {
   }
 
   void deleteItem() {
-    _item = null;
+    // ignore: unnecessary_statements
+    _item != null ? _item = null : null;
     notifyListeners();
   }
 

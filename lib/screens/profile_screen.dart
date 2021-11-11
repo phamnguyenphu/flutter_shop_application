@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/widgets/sheet_address.dart';
 import 'package:flutter_shop_application/widgets/widget.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter_shop_application/providers/user.dart';
 
@@ -44,6 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool? shouldPop;
   DateTime selectedDate = DateTime.now();
   DateFormat formatDate = DateFormat('dd/MM/yyyy');
+  bool isStrechedDropDown = false;
 
   Future<DateTime?> _selectDateTime(BuildContext context) => showDatePicker(
       context: context,
@@ -145,12 +151,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Center(
                               child: Padding(
                                 padding: const EdgeInsets.all(2.0),
-                                child: InkWell(
-                                  onTap: () {},
-                                  child: CircleAvatar(
-                                    backgroundImage: NetworkImage(image),
-                                    radius: 50,
-                                  ),
+                                child: Container(
+                                  height: 80.sp,
+                                  width: 115.sp,
+                                  child: Stack(
+                                      fit: StackFit.expand,
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        CircleAvatar(
+                                            backgroundImage:
+                                                NetworkImage(image),
+                                            radius: 50),
+                                        Positioned(
+                                          right: 0,
+                                          bottom: 0,
+                                          child: Container(
+                                            height: 6.h,
+                                            width: 12.w,
+                                            child: TextButton(
+                                              style: TextButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(50),
+                                                  side: BorderSide(
+                                                      color: Colors.white),
+                                                ),
+                                                primary: Colors.white,
+                                                backgroundColor:
+                                                    Color(0xFFF5F6F9),
+                                              ),
+                                              onPressed: () {
+                                                print('TTT');
+                                              },
+                                              child: SvgPicture.asset(
+                                                  "assets/images/Camera Icon.svg"),
+                                            ),
+                                          ),
+                                        )
+                                      ]),
                                 ),
                               ),
                             ),
@@ -165,6 +203,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             title('Full name:'),
                             BuildTextField(
+                                Icon(LineAwesomeIcons.user_secret,
+                                    color: Colors.red),
                                 TextInputType.text,
                                 false,
                                 'Please enter your full name!',
@@ -172,54 +212,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 'Ex: Nguyen Phu',
                                 () {}),
                             title('Gender:'),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
-                              child: DropdownButtonFormField<String>(
-                                value: dropdownValue,
-                                icon: const Icon(Icons.arrow_downward),
-                                iconSize: 24,
-                                elevation: 16,
-                                style:
-                                    const TextStyle(color: Colors.deepPurple),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8)),
-                                      borderSide: BorderSide(
-                                          color: Colors.black, width: 1)),
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    dropdownValue = newValue!;
-                                  });
-                                },
-                                items: <String>[
-                                  'Male',
-                                  'Female'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
+                            DropButtonCustom(dropdownValue, (String? newValue) {
+                              setState(() {
+                                dropdownValue = newValue!;
+                              });
+                            }),
                             title('Birthday:'),
                             BuildTextField(
+                                Icon(LineAwesomeIcons.birthday_cake,
+                                    color: Colors.cyan),
                                 TextInputType.text,
                                 true,
                                 'Please enter your birthday!',
@@ -241,6 +242,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }),
                             title('Phone Number:'),
                             BuildTextField(
+                                Icon(LineAwesomeIcons.mobile_phone,
+                                    color: Colors.purple),
                                 TextInputType.number,
                                 false,
                                 'Please enter your phone number!',
@@ -249,6 +252,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 () {}),
                             title('Address'),
                             BuildTextField(
+                                Icon(LineAwesomeIcons.globe,
+                                    color: Colors.green),
                                 TextInputType.text,
                                 true,
                                 'Please enter your address!',

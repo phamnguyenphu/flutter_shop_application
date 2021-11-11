@@ -138,7 +138,7 @@ class User with ChangeNotifier {
         extractedData.forEach((key, value) {
           if (value['idUser'] == _userId) {
             data = UserItem(
-              id: _userId!,
+              id: key,
               idUser: _userId!,
               fullName: value['fullName'],
               email: value['email'],

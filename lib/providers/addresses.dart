@@ -36,7 +36,8 @@ class Addresses with ChangeNotifier {
   }
 
   Address? findDefaultAddress() {
-    final address = _addresses.firstWhere((address) => address.status == true);
+    final address = _addresses.firstWhere((address) => address.status == true,
+        orElse: null);
     // ignore: unnecessary_null_comparison
     if (address == null) {
       return null;
@@ -76,7 +77,9 @@ class Addresses with ChangeNotifier {
       return null;
     }
     final id = _addresses.firstWhere((address) => address.status == true).id;
-    final url = Uri.parse('${baseURL}user-$_userId/$id.json?auth=$_authToken');
+    print(id);
+    final url = Uri.parse(
+        '${baseURL}addresses/user-$_userId/$id.json?auth=$_authToken');
     final response = await http.patch(
       url,
       body: json.encode({'status': false}),
@@ -120,7 +123,6 @@ class Addresses with ChangeNotifier {
     try {
       if (address.status) {
         updateStatus();
-        notifyListeners();
       }
       final response = await http.post(url,
           body: json.encode({
@@ -130,6 +132,7 @@ class Addresses with ChangeNotifier {
             "phoneNumber": address.phoneNumber,
             "status": address.status
           }));
+      print(json.decode(response.body));
 
       if (response.statusCode == 200) {
         _addresses.insert(

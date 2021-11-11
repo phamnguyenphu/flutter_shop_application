@@ -29,6 +29,7 @@ class _PaymentScreenState extends State<PaymentScreen>
 
   @override
   void initState() {
+    Future.delayed(Duration.zero).then((_) async {});
     super.initState();
     _controller = AnimationController(vsync: this);
   }
