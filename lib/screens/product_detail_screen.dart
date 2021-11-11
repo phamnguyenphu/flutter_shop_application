@@ -29,7 +29,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           description: loadedProduct.description,
           price: loadedProduct.price,
           imageUrl: loadedProduct.imageUrl,
-          isFavorite: loadedProduct.isFavorite),
+          isFavorite: loadedProduct.isFavorite,
+          type: loadedProduct.type),
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(

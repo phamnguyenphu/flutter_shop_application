@@ -7,6 +7,7 @@ import 'package:flutter_shop_application/providers/products.dart';
 import 'package:flutter_shop_application/screens/cart_screen.dart';
 import 'package:flutter_shop_application/widgets/badge.dart';
 import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
 import '../widgets/products_grid.dart';
 import '../providers/cart.dart';
 import 'dart:math';
@@ -31,6 +32,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
   String keysearch = "";
   TextEditingController _keysearch = new TextEditingController();
   AnimationController? controller;
+  String _isType = 'All';
 
   @override
   void initState() {
@@ -183,6 +185,50 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                       ),
                     ),
                   ),
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    height: 6.h,
+                    width: double.infinity,
+                    child: Wrap(
+                      spacing: 10.sp,
+                      children: [
+                        InkWell(
+                            onTap: () {
+                              setState(() {
+                                _isType = "All";
+                              });
+                            },
+                            child: customChip('All', Icons.all_inclusive,
+                                Colors.purple, _isType)),
+                        InkWell(
+                            onTap: () {
+                              setState(() {
+                                _isType = "Men";
+                              });
+                            },
+                            child: customChip(
+                                'Men', Icons.male, Colors.blue, _isType)),
+                        InkWell(
+                            onTap: () {
+                              setState(() {
+                                _isType = "Women";
+                              });
+                            },
+                            child: customChip('Women', Icons.female,
+                                Colors.pink.shade300, _isType)),
+                        InkWell(
+                            onTap: () {
+                              setState(() {
+                                _isType = "Kid";
+                              });
+                            },
+                            child: customChip(
+                                'Kid', Icons.child_care, Colors.green, _isType)),
+                        // IconButton(
+                        //     onPressed: () {}, icon: Icon(Icons.more_vert))
+                      ],
+                    ),
+                  ),
                   Expanded(
                     child: _isLoading
                         ? Center(
@@ -193,6 +239,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                         : RefreshIndicator(
                             onRefresh: () => _refreshProducts(),
                             child: ProductsGrid(
+                              isType: _isType,
                               showFavs: _showFavoritesOnly,
                               keywords: _keysearch.text,
                             ),
@@ -201,5 +248,16 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                 ],
               )),
         ));
+  }
+
+  Chip customChip(String name, IconData icon, Color color, String ischeck) {
+    return Chip(
+      backgroundColor: ischeck == name ? color : Colors.grey,
+      label: Text(name, style: TextStyle(color: Colors.white, fontSize: 15)),
+      avatar: CircleAvatar(
+        child: Icon(icon, color: ischeck == name ? color : Colors.grey),
+        backgroundColor: Colors.white.withOpacity(0.8),
+      ),
+    );
   }
 }

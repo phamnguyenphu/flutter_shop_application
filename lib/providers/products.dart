@@ -28,6 +28,12 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
+  List<Product> searchType(String type) {
+    List<Product> product = [];
+    product = _items.where((product) => product.type == type).toList();
+    return product;
+  }
+
   Future<void> fetchProducts() async {
     var url = Uri.parse(
         'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products.json');
@@ -55,6 +61,7 @@ class Products with ChangeNotifier {
               isFavorite: favoriteData == null
                   ? false
                   : favoriteData[productId] ?? null,
+              type: productData['type'],
             ),
           );
         });
@@ -68,6 +75,7 @@ class Products with ChangeNotifier {
               price: productData['price'],
               imageUrl: productData['imgUrl'],
               isFavorite: productData['isFavorite'],
+              type: productData['type'],
             ),
           );
         });
@@ -100,6 +108,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imgUrl': product.imageUrl,
           'price': product.price,
+          'type': product.type
         }),
       );
       final newProduct = Product(
@@ -107,7 +116,9 @@ class Products with ChangeNotifier {
           title: product.title,
           description: product.description,
           price: product.price,
-          imageUrl: product.imageUrl);
+          imageUrl: product.imageUrl,
+          type: product.type);
+
       _items.add(newProduct);
       notifyListeners();
     } catch (error) {
