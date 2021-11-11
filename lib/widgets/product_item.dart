@@ -44,9 +44,11 @@ class ProductItem extends StatelessWidget {
                 builder: (ctx, value, _) => IconButton(
                   // ignore: deprecated_member_use
                   color: Theme.of(context).accentColor,
-                  icon: value.isFavorite
-                      ? Icon(Icons.favorite, color: Colors.red)
-                      : Icon(Icons.favorite_border, color: Colors.red),
+                  icon: value.isFavorite == null
+                      ? Icon(Icons.favorite_border, color: Colors.red)
+                      : value.isFavorite
+                          ? Icon(Icons.favorite, color: Colors.red)
+                          : Icon(Icons.favorite_border, color: Colors.red),
                   onPressed: () {
                     authData.isAuth == false
                         ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(

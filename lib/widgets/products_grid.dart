@@ -15,9 +15,10 @@ class ProductsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
-    final productType =
-        isType == 'All' ? productsData.items : productsData.searchType(isType);
-    var products = showFavs ? productsData.itemsFavorites : productType;
+    final productByType = isType == 'All'
+        ? productsData.items
+        : productsData.searchByType(isType);
+    var products = showFavs ? productsData.itemsFavorites : productByType;
     if (keywords.length > 0) {
       products =
           Provider.of<Products>(context).searchProducts(keywords, products);

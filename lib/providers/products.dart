@@ -28,7 +28,7 @@ class Products with ChangeNotifier {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  List<Product> searchType(String type) {
+  List<Product> searchByType(String type) {
     List<Product> product = [];
     product = _items.where((product) => product.type == type).toList();
     return product;

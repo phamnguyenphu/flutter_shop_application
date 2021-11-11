@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/addresses.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:image_picker/image_picker.dart';
@@ -37,7 +39,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formkey = new GlobalKey<FormState>();
   bool gender = true;
-  String image =
+  String imageAvatar =
       'https://firebasestorage.googleapis.com/v0/b/flutter-shop-d0a51.appspot.com/o/avatar.jpg?alt=media&token=cdb54cc3-6514-4e4f-b69b-8794450d2da3';
   String dropdownValue = 'Male';
   TextEditingController _nameController = new TextEditingController();
@@ -56,6 +58,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
       initialDate: DateTime.now().add(Duration(seconds: 1)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now());
+
+  Future<void> uploadImage(ImageSource source) async {
+    final user = Provider.of<User>(context, listen: false).user;
+    final fireStorage = FirebaseStorage.instance;
+    final _picker = ImagePicker();
+    String imagefilename = user.id + DateTime.now().toString();
+    XFile? image;
+
+    //Check permission
+    await Permission.photos.request();
+
+    var permissionStatus = await Permission.photos.status;
+
+    if (permissionStatus.isGranted) {
+      //Select Image
+      // ignore: deprecated_member_use
+      image = await _picker.pickImage(source: source);
+      if (image == null) {
+        return;
+      }
+      var file = File(image.path);
+      //Upload to Firebase
+      var snapshot = await fireStorage.ref().child(imagefilename).putFile(file);
+      var download = await snapshot.ref.getDownloadURL();
+      setState(() {
+        imageAvatar = download;
+      });
+    } else {
+      print('Grant Permission and try again');
+    }
+  }
+
   @override
   void initState() {
     setState(() {
@@ -75,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _phoneNumberController.text = user.phoneNumber;
         _addressController.text = user.address;
         if (user.avatar != '') {
-          image = user.avatar;
+          imageAvatar = user.avatar;
         }
         dropdownValue = user.gender ? 'Male' : 'Female';
       }
@@ -159,8 +193,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       clipBehavior: Clip.none,
                                       children: [
                                         CircleAvatar(
-                                            backgroundImage:
-                                                NetworkImage(image),
+                                            // backgroundImage:
+                                            //     NetworkImage(imageAvatar),
+                                            child: ClipOval(
+                                              child: FadeInImage.assetNetwork(
+                                                placeholder:
+                                                    'assets/images/circle.gif',
+                                                image: imageAvatar,
+                                                fit: BoxFit.cover,
+                                                width: 110.0,
+                                                height: 120.0,
+                                              ),
+                                            ),
                                             radius: 50),
                                         Positioned(
                                           right: 0,
@@ -180,9 +224,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 backgroundColor:
                                                     Color(0xFFF5F6F9),
                                               ),
-                                              onPressed: () {
-                                                print('TTT');
-                                              },
+                                              onPressed: () =>
+                                                  showModalBottomSheet(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              ListTile(
+                                                                  leading: Icon(
+                                                                      Icons
+                                                                          .camera_alt),
+                                                                  title: Text(
+                                                                      'Camera'),
+                                                                  onTap: () => {
+                                                                        Navigator.of(context)
+                                                                            .pop(ImageSource.camera),
+                                                                        uploadImage(
+                                                                            ImageSource.camera),
+                                                                      }),
+                                                              ListTile(
+                                                                  leading: Icon(
+                                                                      Icons
+                                                                          .image),
+                                                                  title: Text(
+                                                                      'Gallery'),
+                                                                  onTap: () => {
+                                                                        Navigator.of(context)
+                                                                            .pop(ImageSource.gallery),
+                                                                        uploadImage(
+                                                                            ImageSource.gallery),
+                                                                      }),
+                                                            ]);
+                                                      }),
                                               child: SvgPicture.asset(
                                                   "assets/images/Camera Icon.svg"),
                                             ),
@@ -297,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               : false,
                                           address: _addressController.text,
                                           fullName: _nameController.text,
-                                          avatar: image,
+                                          avatar: imageAvatar,
                                           idUser: userId!,
                                           birthday: _birthdayController.text,
                                         );
