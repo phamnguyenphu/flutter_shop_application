@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/addresses.dart';
+import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/widgets/sheet_address.dart';
 import 'package:flutter_shop_application/widgets/widget.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,6 +20,7 @@ import 'package:flutter_shop_application/providers/user.dart';
 
 import 'drawer_screen.dart';
 import 'products_overview_screen.dart';
+import 'reset_password.dart';
 
 enum listChoose { ChangePassword }
 
@@ -131,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userId = Provider.of<User>(context).userId;
+    final userId = Provider.of<Auth>(context).userId;
     final address = Provider.of<AddressItems>(context).item;
     if (address != null) {
       setState(() {
@@ -155,20 +157,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: Theme.of(context).textTheme.subtitle1,
             ),
             actions: [
-              PopupMenuButton(
-                onSelected: (listChoose selected) {
-                  if (selected == listChoose.ChangePassword) {}
-                },
-                itemBuilder: (ctx) => [
-                  PopupMenuItem(
-                    height: 5.h,
-                    child: Text('Change Password',
-                        style: Theme.of(context).textTheme.bodyText2),
-                    value: listChoose.ChangePassword,
-                  ),
-                ],
-                icon: Icon(Icons.more_vert),
-              ),
+              if (!widget.isSignUp)
+                PopupMenuButton(
+                  onSelected: (listChoose selected) {
+                    if (selected == listChoose.ChangePassword) {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (ctx) => ResetPassword()));
+                    }
+                  },
+                  itemBuilder: (ctx) => [
+                    PopupMenuItem(
+                      height: 5.h,
+                      child: Text('Change Password',
+                          style: Theme.of(context).textTheme.bodyText2),
+                      value: listChoose.ChangePassword,
+                    ),
+                  ],
+                  icon: Icon(Icons.more_vert),
+                ),
             ],
           ),
           body: isLoading
@@ -237,7 +243,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               ListTile(
                                                                   leading: Icon(
                                                                       Icons
-                                                                          .camera_alt),
+                                                                          .camera_alt,
+                                                                      color: Colors
+                                                                          .blue),
                                                                   title: Text(
                                                                       'Camera'),
                                                                   onTap: () => {
@@ -249,7 +257,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                               ListTile(
                                                                   leading: Icon(
                                                                       Icons
-                                                                          .image),
+                                                                          .image,
+                                                                      color: Colors
+                                                                          .amber),
                                                                   title: Text(
                                                                       'Gallery'),
                                                                   onTap: () => {
@@ -349,7 +359,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Container(
                                   width: 200,
                                   decoration: BoxDecoration(
-                                      color: Colors.orange,
+                                      gradient: LinearGradient(colors: [
+                                        Colors.blue.shade800,
+                                        Colors.blue.withOpacity(0.7)
+                                      ]),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(20))),
                                   child: TextButton(
@@ -393,18 +406,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           await Provider.of<User>(context,
                                                   listen: false)
                                               .addUser(userData)
-                                              .then((value) => Navigator.of(
-                                                      context)
-                                                  .pushReplacement(
-                                                      MaterialPageRoute(
-                                                          builder: (ctx) =>
-                                                              Scaffold(
-                                                                  body: Stack(
-                                                                children: [
-                                                                  DrawerScreen(),
-                                                                  ProductsOverviewScreen(),
-                                                                ],
-                                                              )))));
+                                              .then((value) => {
+                                                    setState(() {
+                                                      isLoading = false;
+                                                    }),
+                                                    Navigator.of(context)
+                                                        .pushReplacement(
+                                                            MaterialPageRoute(
+                                                                builder: (ctx) =>
+                                                                    Scaffold(
+                                                                        body:
+                                                                            Stack(
+                                                                      children: [
+                                                                        DrawerScreen(),
+                                                                        ProductsOverviewScreen(),
+                                                                      ],
+                                                                    ))))
+                                                  });
                                         } else {
                                           await Provider.of<User>(context,
                                                   listen: false)

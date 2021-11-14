@@ -148,7 +148,7 @@ class MyApp extends StatelessWidget {
                 UserProductScreen.routeName: (ctx) => UserProductScreen(),
                 EditProductScreen.routeName: (ctx) => EditProductScreen(),
                 SplashScreen.routeName: (ctx) => SplashScreen(),
-                PaymentScreen.routeName: (ctx) => PaymentScreen(),
+                PaymentScreen.routeName: (ctx) => PaymentScreen()
               },
             );
           },

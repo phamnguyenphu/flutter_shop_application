@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/models/http_exception.dart';
 import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/providers/user.dart';
+import 'package:flutter_shop_application/screens/forgot_password.dart';
 import 'package:provider/provider.dart';
 
 enum AuthMode { Signup, Login }
@@ -136,12 +137,24 @@ class _AuthCardState extends State<AuthCard> {
     try {
       if (_authMode == AuthMode.Login) {
         // Log user in
-        await Provider.of<Auth>(context, listen: false).login(
-            _authData['email'].toString(), _authData['password'].toString());
+        await Provider.of<Auth>(context, listen: false)
+            .login(
+                _authData['email'].toString(), _authData['password'].toString())
+            .then(
+              (value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: const Text(
+                'Login Account Success!',
+                style: TextStyle(color: Colors.white),
+              ))),
+            );
       } else {
         // Sign user up
         await Provider.of<Auth>(context, listen: false).signup(
-            _authData['email'].toString(), _authData['password'].toString());
+            _authData['email'].toString(), _authData['password'].toString()).then((value) =>ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: const Text(
+                'Please enter some your information!',
+                style: TextStyle(color: Colors.white),
+              ))), );
       }
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
@@ -331,7 +344,10 @@ class _AuthCardState extends State<AuthCard> {
                   child: Text(
                     'Forgot Password',
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (ctx) => ForgotPass()));
+                  },
                   padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   textColor: Color.fromRGBO(143, 148, 251, 1),

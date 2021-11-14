@@ -234,7 +234,11 @@ class _EditAddressState extends State<EditAddress> {
                       ),
                       SizedBox(height: 7.h),
                       Container(
-                        decoration: BoxDecoration(color: Colors.red),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(colors: [
+                          Colors.blue.shade800,
+                          Colors.blue.withOpacity(0.7)
+                        ])),
                         width: double.infinity,
                         child: TextButton(
                             onPressed: () async {

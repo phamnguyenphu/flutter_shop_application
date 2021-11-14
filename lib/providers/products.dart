@@ -7,6 +7,7 @@ import 'package:flutter_shop_application/models/.env.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [];
+  List<Product> _favorites = [];
 
   String? _authToken;
   String? _userId;
@@ -21,7 +22,13 @@ class Products with ChangeNotifier {
   }
 
   List<Product> get itemsFavorites {
-    return items.where((element) => element.isFavorite).toList();
+    List<Product> list = [];
+    list = _items.where((element) => element.isFavorite == true).toList();
+    if (list == null) {
+      return _favorites;
+    }
+    _favorites = list;
+    return _favorites;
   }
 
   Product findById(String id) {

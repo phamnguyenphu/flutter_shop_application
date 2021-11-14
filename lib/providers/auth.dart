@@ -28,7 +28,6 @@ class Auth with ChangeNotifier {
     return _email;
   }
 
-
   String? get token {
     if (_token != null &&
         _expiryDate != null &&
@@ -52,6 +51,37 @@ class Auth with ChangeNotifier {
 
   String? get userId {
     return _userId;
+  }
+
+  Future<void> resetPassword(String newPassword, String token) async {
+    final url = Uri.parse(
+        'https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyCgYv4TINBq7rWWUSXJsY0_BM_668-G4QU');
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode(
+          {
+            'idToken': token,
+            'password': newPassword,
+            'returnSecureToken': true,
+          },
+        ),
+      );
+      final responseData = json.decode(response.body);
+      if (responseData['error'] != null) {
+        throw HttpException(responseData['error']['message']);
+      }
+      _email = email;
+      _token = responseData['idToken'];
+      _userId = responseData['localId'];
+      _expiryDate = DateTime.now()
+          .add(Duration(seconds: int.parse(responseData['expiresIn'])));
+      autoLogout();
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw error;
+    }
   }
 
   Future<void> _authenticate(
@@ -108,7 +138,7 @@ class Auth with ChangeNotifier {
     notifyListeners();
   }
 
-  void changeSplash(){
+  void changeSplash() {
     splash = false;
     notifyListeners();
   }
