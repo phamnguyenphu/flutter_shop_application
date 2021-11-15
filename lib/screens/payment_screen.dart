@@ -311,21 +311,28 @@ class _PaymentScreenState extends State<PaymentScreen>
                               width: 30.w,
                               decoration: BoxDecoration(color: Colors.red),
                               child: TextButton(
-                                  onPressed: () async {
-                                    setState(() {
-                                      _isLoading = true;
-                                    });
-                                    await Provider.of<Order>(context,
-                                            listen: false)
-                                        .addOrder(cart.items.values.toList(),
-                                            cart.totalAmount);
-                                    setState(() {
-                                      _isLoading = false;
-                                    });
-                                    Navigator.of(context).pushReplacementNamed(
-                                        OrderScreen.routeName);
-                                    cart.clearCart();
-                                  },
+                                  onPressed: defaultAddress == null
+                                      ? () {}
+                                      : () async {
+                                          setState(() {
+                                            _isLoading = true;
+                                          });
+                                          await Provider.of<Order>(context,
+                                                  listen: false)
+                                              .addOrder(
+                                                  cart.items.values.toList(),
+                                                  cart.totalAmount,
+                                                  defaultAddress!.fullName,
+                                                  defaultAddress!.phoneNumber,
+                                                  defaultAddress!.address);
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
+                                          Navigator.of(context)
+                                              .pushReplacementNamed(
+                                                  OrderScreen.routeName);
+                                          cart.clearCart();
+                                        },
                                   child: Text(
                                     'Order Now',
                                     style: TextStyle(
