@@ -43,7 +43,7 @@ class Products with ChangeNotifier {
 
   Future<void> fetchProducts() async {
     var url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/products.json');
+        '${baseURL}products.json');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -54,7 +54,7 @@ class Products with ChangeNotifier {
       final List<Product> loadingProducts = [];
       if (_userId != null && _authToken != null) {
         url = Uri.parse(
-            'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/userFavorite/$_userId.json?auth=$_authToken');
+            '${baseURL}userFavorite/$_userId.json?auth=$_authToken');
         final favoriteResponse = await http.get(url);
         final favoriteData = json.decode(favoriteResponse.body);
         extractedData.forEach((productId, productData) {

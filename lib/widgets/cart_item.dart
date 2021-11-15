@@ -9,7 +9,7 @@ class CartItemWidget extends StatefulWidget {
   final String title;
 
   final String imgUrl;
-  final double price;
+  final int price;
   final int quanlity;
   final String id;
   final String productId;
@@ -177,6 +177,8 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                     children: [
                       Text(
                         widget.title,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                       SizedBox(

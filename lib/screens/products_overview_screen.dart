@@ -1,5 +1,6 @@
 import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/aboutUs.dart';
 import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/providers/product.dart';
@@ -36,7 +37,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     controller = AnimationController(
         vsync: this, duration: Duration(milliseconds: 1000));
@@ -50,6 +50,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
           .fetchProducts()
           .then((_) => _isLoading = false);
       final isAuth = Provider.of<Auth>(context, listen: false).isAuth;
+      await Provider.of<AboutUsInfor>(context, listen: false).fetchAboutUs();
       isAuth == true
           ? await Provider.of<Addresses>(context, listen: false).fetchAddresss()
           // ignore: unnecessary_statements
@@ -222,8 +223,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                                 _isType = "Kid";
                               });
                             },
-                            child: customChip(
-                                'Kid', Icons.child_care, Colors.green, _isType)),
+                            child: customChip('Kid', Icons.child_care,
+                                Colors.green, _isType)),
                         // IconButton(
                         //     onPressed: () {}, icon: Icon(Icons.more_vert))
                       ],

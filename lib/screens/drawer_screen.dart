@@ -8,6 +8,8 @@ import 'package:flutter_shop_application/screens/user_product_screen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
+import 'about_us_screen.dart';
+
 class DrawerScreen extends StatefulWidget {
   const DrawerScreen({Key? key}) : super(key: key);
 
@@ -118,7 +120,11 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             ),
                             ListTile(
                               leading: Icon(Icons.info),
-                              title: Text('About'),
+                              title: Text('About us'),
+                              onTap: () {
+                                 Navigator.of(context)
+                                    .pushNamed(AboutUsScreen.routeName);
+                              }
                             ),
                             ListTile(
                               leading: Icon(Icons.logout),

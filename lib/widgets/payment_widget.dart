@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 class PaymentWidget extends StatelessWidget {
   final String title;
   final String imgUrl;
-  final double price;
+  final int price;
   final int quanlity;
   final String id;
   final String productId;
@@ -55,6 +55,8 @@ class PaymentWidget extends StatelessWidget {
                 children: [
                   Text(
                     title,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                   SizedBox(

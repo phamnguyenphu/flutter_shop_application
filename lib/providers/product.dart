@@ -9,7 +9,7 @@ class Product with ChangeNotifier {
   final String id;
   final String title;
   final String description;
-  final double price;
+  final int price;
   final String type;
   final String imageUrl;
   bool isFavorite;
