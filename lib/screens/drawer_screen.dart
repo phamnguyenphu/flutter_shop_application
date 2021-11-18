@@ -8,6 +8,8 @@ import 'package:flutter_shop_application/screens/user_product_screen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
+import 'about_us_screen.dart';
+
 class DrawerScreen extends StatefulWidget {
   const DrawerScreen({Key? key}) : super(key: key);
 
@@ -17,6 +19,7 @@ class DrawerScreen extends StatefulWidget {
 
 class _DrawerScreenState extends State<DrawerScreen> {
   bool isLoading = false;
+
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) async {
@@ -41,109 +44,140 @@ class _DrawerScreenState extends State<DrawerScreen> {
                   child: Column(
                     children: [
                       CircleAvatar(
-                        backgroundImage: NetworkImage(user.avatar, scale: 1.0),
+                        backgroundImage: NetworkImage(
+                            user.avatar == ''
+                                ? 'https://firebasestorage.googleapis.com/v0/b/flutter-shop-d0a51.appspot.com/o/avatar.jpg?alt=media&token=cdb54cc3-6514-4e4f-b69b-8794450d2da3'
+                                : user.avatar,
+                            scale: 1.0),
                         radius: 50.0,
                       ),
                       SizedBox(
                         height: 10.0,
                       ),
                       Text(
-                        user.fullName,
+                        user.fullName == '' ? 'User Name' : user.fullName,
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                       SizedBox(
                         height: 5.0,
                       ),
-                      Text(user.email,
+                      Text(user.email == '' ? 'abc123@gmail.com' : user.email,
                           style: Theme.of(context).textTheme.subtitle2),
                     ],
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 40.0),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ProfileScreen(
-                                    email: user.email,
-                                    isSignUp: false,
-                                  )));
-                        },
-                        leading: Icon(Icons.account_box),
-                        title: Text('Profile'),
+                user.email == ''
+                    ? Container(
+                        margin: EdgeInsets.only(top: 40.0),
+                        child: Column(children: [
+                          ListTile(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed(AuthenScreen.routeName);
+                            },
+                            leading: Icon(Icons.lock),
+                            title: Text('Login'),
+                          ),
+                          ListTile(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed(AuthenScreen.routeName);
+                            },
+                            leading: Icon(Icons.info),
+                            title: Text('About'),
+                          ),
+                        ]))
+                    : Container(
+                        margin: EdgeInsets.only(top: 40.0),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => ProfileScreen(
+                                          email: user.email,
+                                          isSignUp: false,
+                                        )));
+                              },
+                              leading: Icon(Icons.account_box),
+                              title: Text('Profile'),
+                            ),
+                            ListTile(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .pushNamed(OrderScreen.routeName);
+                              },
+                              leading: Icon(Icons.task),
+                              title: Text('Order'),
+                            ),
+                            ListTile(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .pushNamed(UserProductScreen.routeName);
+                              },
+                              leading: Icon(Icons.settings),
+                              title: Text('Products'),
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.info),
+                              title: Text('About us'),
+                              onTap: () {
+                                 Navigator.of(context)
+                                    .pushNamed(AboutUsScreen.routeName);
+                              }
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.logout),
+                              title: Text('Log out'),
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                          elevation: 5.0,
+                                          backgroundColor: Colors.white,
+                                          title: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.warning_rounded,
+                                                size: 20.0,
+                                                color: Colors.red,
+                                              ),
+                                              SizedBox(
+                                                width: 15.0,
+                                              ),
+                                              Text('Are you sure?')
+                                            ],
+                                          ),
+                                          content: Text(
+                                              'Do you want to sign out of the app?'),
+                                          actions: [
+                                            // ignore: deprecated_member_use
+                                            FlatButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(false);
+                                                },
+                                                child: const Text('No')),
+                                            // ignore: deprecated_member_use
+                                            FlatButton(
+                                                onPressed: () {
+                                                  Provider.of<Auth>(context,
+                                                          listen: false)
+                                                      .logOut();
+                                                  Provider.of<User>(context,
+                                                          listen: false)
+                                                      .logout();
+                                                  Navigator.of(context)
+                                                      .pop(false);
+                                                },
+                                                child: const Text('Yes')),
+                                          ],
+                                        ));
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                      ListTile(
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(OrderScreen.routeName);
-                        },
-                        leading: Icon(Icons.task),
-                        title: Text('Order'),
-                      ),
-                      ListTile(
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(UserProductScreen.routeName);
-                        },
-                        leading: Icon(Icons.settings),
-                        title: Text('Products'),
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.info),
-                        title: Text('About'),
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.logout),
-                        title: Text('Log out'),
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                    elevation: 5.0,
-                                    backgroundColor: Colors.white,
-                                    title: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.warning_rounded,
-                                          size: 20.0,
-                                          color: Colors.red,
-                                        ),
-                                        SizedBox(
-                                          width: 15.0,
-                                        ),
-                                        Text('Are you sure?')
-                                      ],
-                                    ),
-                                    content: Text(
-                                        'Do you want to sign out of the app?'),
-                                    actions: [
-                                      // ignore: deprecated_member_use
-                                      FlatButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop(false);
-                                          },
-                                          child: const Text('No')),
-                                      // ignore: deprecated_member_use
-                                      FlatButton(
-                                          onPressed: () {
-                                            Provider.of<Auth>(context,
-                                                    listen: false)
-                                                .logOut();
-                                                   Navigator.of(context).pop(false);
-                                            // Navigator.of(context)
-                                            //     .pushReplacementNamed(
-                                            //         AuthenScreen.routeName);
-                                          },
-                                          child: const Text('Yes')),
-                                    ],
-                                  ));
-                        },
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           );

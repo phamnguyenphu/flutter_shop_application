@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/auth.dart';
+import 'package:flutter_shop_application/screens/auth_screen.dart';
 import '../providers/product.dart';
 import 'package:provider/provider.dart';
 import '../screens/product_detail_screen.dart';
@@ -43,11 +44,30 @@ class ProductItem extends StatelessWidget {
                 builder: (ctx, value, _) => IconButton(
                   // ignore: deprecated_member_use
                   color: Theme.of(context).accentColor,
-                  icon: value.isFavorite
-                      ? Icon(Icons.favorite, color: Colors.red)
-                      : Icon(Icons.favorite_border, color: Colors.red),
+                  icon: value.isFavorite == null
+                      ? Icon(Icons.favorite_border, color: Colors.red)
+                      : value.isFavorite
+                          ? Icon(Icons.favorite, color: Colors.red)
+                          : Icon(Icons.favorite_border, color: Colors.red),
                   onPressed: () {
-                    value.toggleFavorite(authData.token!, authData.userId!);
+                    authData.isAuth == false
+                        ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: const Text(
+                              'To perform the function please login! Click ->',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Color.fromRGBO(252, 207, 218, 1),
+                            action: SnackBarAction(
+                              label: 'LOGIN',
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pushNamed(AuthenScreen.routeName);
+                              },
+                            ),
+                          ))
+                        : value.toggleFavorite(
+                            authData.token!, authData.userId!);
                   },
                 ),
               ),

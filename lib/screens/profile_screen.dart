@@ -1,16 +1,26 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/address.dart';
+import 'package:flutter_shop_application/providers/addresses.dart';
+import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/widgets/sheet_address.dart';
 import 'package:flutter_shop_application/widgets/widget.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter_shop_application/providers/user.dart';
 
 import 'drawer_screen.dart';
 import 'products_overview_screen.dart';
+import 'reset_password.dart';
 
 enum listChoose { ChangePassword }
 
@@ -31,7 +41,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formkey = new GlobalKey<FormState>();
   bool gender = true;
-  String image =
+  String imageAvatar =
       'https://firebasestorage.googleapis.com/v0/b/flutter-shop-d0a51.appspot.com/o/avatar.jpg?alt=media&token=cdb54cc3-6514-4e4f-b69b-8794450d2da3';
   String dropdownValue = 'Male';
   TextEditingController _nameController = new TextEditingController();
@@ -43,12 +53,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool? shouldPop;
   DateTime selectedDate = DateTime.now();
   DateFormat formatDate = DateFormat('dd/MM/yyyy');
+  bool isStrechedDropDown = false;
 
   Future<DateTime?> _selectDateTime(BuildContext context) => showDatePicker(
       context: context,
       initialDate: DateTime.now().add(Duration(seconds: 1)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now());
+
+  Future<void> uploadImage(ImageSource source) async {
+    final user = Provider.of<User>(context, listen: false).user;
+    final fireStorage = FirebaseStorage.instance;
+    final _picker = ImagePicker();
+    String imagefilename = user.id + DateTime.now().toString();
+    XFile? image;
+
+    //Check permission
+    await Permission.photos.request();
+
+    var permissionStatus = await Permission.photos.status;
+
+    if (permissionStatus.isGranted) {
+      //Select Image
+      // ignore: deprecated_member_use
+      image = await _picker.pickImage(source: source);
+      if (image == null) {
+        return;
+      }
+      var file = File(image.path);
+      //Upload to Firebase
+      var snapshot = await fireStorage.ref().child(imagefilename).putFile(file);
+      var download = await snapshot.ref.getDownloadURL();
+      setState(() {
+        imageAvatar = download;
+      });
+    } else {
+      print('Grant Permission and try again');
+    }
+  }
+
   @override
   void initState() {
     setState(() {
@@ -68,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _phoneNumberController.text = user.phoneNumber;
         _addressController.text = user.address;
         if (user.avatar != '') {
-          image = user.avatar;
+          imageAvatar = user.avatar;
         }
         dropdownValue = user.gender ? 'Male' : 'Female';
       }
@@ -90,6 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = Provider.of<Auth>(context).userId;
     final address = Provider.of<AddressItems>(context).item;
     if (address != null) {
       setState(() {
@@ -113,20 +157,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: Theme.of(context).textTheme.subtitle1,
             ),
             actions: [
-              PopupMenuButton(
-                onSelected: (listChoose selected) {
-                  if (selected == listChoose.ChangePassword) {}
-                },
-                itemBuilder: (ctx) => [
-                  PopupMenuItem(
-                    height: 5.h,
-                    child: Text('Change Password',
-                        style: Theme.of(context).textTheme.bodyText2),
-                    value: listChoose.ChangePassword,
-                  ),
-                ],
-                icon: Icon(Icons.more_vert),
-              ),
+              if (!widget.isSignUp)
+                PopupMenuButton(
+                  onSelected: (listChoose selected) {
+                    if (selected == listChoose.ChangePassword) {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (ctx) => ResetPassword()));
+                    }
+                  },
+                  itemBuilder: (ctx) => [
+                    PopupMenuItem(
+                      height: 5.h,
+                      child: Text('Change Password',
+                          style: Theme.of(context).textTheme.bodyText2),
+                      value: listChoose.ChangePassword,
+                    ),
+                  ],
+                  icon: Icon(Icons.more_vert),
+                ),
             ],
           ),
           body: isLoading
@@ -143,12 +191,91 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Center(
                               child: Padding(
                                 padding: const EdgeInsets.all(2.0),
-                                child: InkWell(
-                                  onTap: () {},
-                                  child: CircleAvatar(
-                                    backgroundImage: NetworkImage(image),
-                                    radius: 50,
-                                  ),
+                                child: Container(
+                                  height: 80.sp,
+                                  width: 115.sp,
+                                  child: Stack(
+                                      fit: StackFit.expand,
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        CircleAvatar(
+                                            // backgroundImage:
+                                            //     NetworkImage(imageAvatar),
+                                            child: ClipOval(
+                                              child: FadeInImage.assetNetwork(
+                                                placeholder:
+                                                    'assets/images/circle.gif',
+                                                image: imageAvatar,
+                                                fit: BoxFit.cover,
+                                                width: 110.0,
+                                                height: 120.0,
+                                              ),
+                                            ),
+                                            radius: 50),
+                                        Positioned(
+                                          right: 0,
+                                          bottom: 0,
+                                          child: Container(
+                                            height: 6.h,
+                                            width: 12.w,
+                                            child: TextButton(
+                                              style: TextButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(50),
+                                                  side: BorderSide(
+                                                      color: Colors.white),
+                                                ),
+                                                primary: Colors.white,
+                                                backgroundColor:
+                                                    Color(0xFFF5F6F9),
+                                              ),
+                                              onPressed: () =>
+                                                  showModalBottomSheet(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              ListTile(
+                                                                  leading: Icon(
+                                                                      Icons
+                                                                          .camera_alt,
+                                                                      color: Colors
+                                                                          .blue),
+                                                                  title: Text(
+                                                                      'Camera'),
+                                                                  onTap: () => {
+                                                                        Navigator.of(context)
+                                                                            .pop(ImageSource.camera),
+                                                                        uploadImage(
+                                                                            ImageSource.camera),
+                                                                      }),
+                                                              ListTile(
+                                                                  leading: Icon(
+                                                                      Icons
+                                                                          .image,
+                                                                      color: Colors
+                                                                          .amber),
+                                                                  title: Text(
+                                                                      'Gallery'),
+                                                                  onTap: () => {
+                                                                        Navigator.of(context)
+                                                                            .pop(ImageSource.gallery),
+                                                                        uploadImage(
+                                                                            ImageSource.gallery),
+                                                                      }),
+                                                            ]);
+                                                      }),
+                                              child: SvgPicture.asset(
+                                                  "assets/images/Camera Icon.svg"),
+                                            ),
+                                          ),
+                                        )
+                                      ]),
                                 ),
                               ),
                             ),
@@ -163,6 +290,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             title('Full name:'),
                             BuildTextField(
+                                Icon(LineAwesomeIcons.user_secret,
+                                    color: Colors.red),
                                 TextInputType.text,
                                 false,
                                 'Please enter your full name!',
@@ -170,54 +299,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 'Ex: Nguyen Phu',
                                 () {}),
                             title('Gender:'),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
-                              child: DropdownButtonFormField<String>(
-                                value: dropdownValue,
-                                icon: const Icon(Icons.arrow_downward),
-                                iconSize: 24,
-                                elevation: 16,
-                                style:
-                                    const TextStyle(color: Colors.deepPurple),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(8)),
-                                      borderSide: BorderSide(
-                                          color: Colors.black, width: 1)),
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    dropdownValue = newValue!;
-                                  });
-                                },
-                                items: <String>[
-                                  'Male',
-                                  'Female'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.normal,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
+                            DropButtonCustom(dropdownValue, (String? newValue) {
+                              setState(() {
+                                dropdownValue = newValue!;
+                              });
+                            }),
                             title('Birthday:'),
                             BuildTextField(
+                                Icon(LineAwesomeIcons.birthday_cake,
+                                    color: Colors.cyan),
                                 TextInputType.text,
                                 true,
                                 'Please enter your birthday!',
@@ -239,6 +329,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }),
                             title('Phone Number:'),
                             BuildTextField(
+                                Icon(LineAwesomeIcons.mobile_phone,
+                                    color: Colors.purple),
                                 TextInputType.number,
                                 false,
                                 'Please enter your phone number!',
@@ -247,6 +339,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 () {}),
                             title('Address'),
                             BuildTextField(
+                                Icon(LineAwesomeIcons.globe,
+                                    color: Colors.green),
                                 TextInputType.text,
                                 true,
                                 'Please enter your address!',
@@ -265,7 +359,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Container(
                                   width: 200,
                                   decoration: BoxDecoration(
-                                      color: Colors.orange,
+                                      gradient: LinearGradient(colors: [
+                                        Colors.blue.shade800,
+                                        Colors.blue.withOpacity(0.7)
+                                      ]),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(20))),
                                   child: TextButton(
@@ -290,45 +387,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               : false,
                                           address: _addressController.text,
                                           fullName: _nameController.text,
-                                          avatar: image,
-                                          idUser: user.idUser,
+                                          avatar: imageAvatar,
+                                          idUser: userId!,
                                           birthday: _birthdayController.text,
                                         );
-                                        widget.isSignUp
-                                            ? await Provider.of<User>(context,
-                                                    listen: false)
-                                                .addUser(userData)
-                                                .then((value) => Navigator.of(
-                                                        context)
-                                                    .pushReplacement(
-                                                        MaterialPageRoute(
-                                                            builder: (ctx) =>
-                                                                Scaffold(
-                                                                    body: Stack(
-                                                                  children: [
-                                                                    DrawerScreen(),
-                                                                    ProductsOverviewScreen(),
-                                                                  ],
-                                                                )))))
-                                            : await Provider.of<User>(context,
-                                                    listen: false)
-                                                .updateUser(userData)
-                                                .then((value) => {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              SnackBar(
-                                                                  content:
-                                                                      const Text(
-                                                        'Update Profile Success!',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ))),
-                                                      setState(() {
-                                                        isLoading = false;
-                                                      })
-                                                    });
+                                        final address = Address(
+                                            id: '',
+                                            idUser: userId,
+                                            address: _addressController.text,
+                                            fullName: _nameController.text,
+                                            phoneNumber:
+                                                _phoneNumberController.text,
+                                            status: true);
+                                        if (widget.isSignUp) {
+                                          await Provider.of<Addresses>(context,
+                                                  listen: false)
+                                              .addAddress(address);
+                                          await Provider.of<User>(context,
+                                                  listen: false)
+                                              .addUser(userData)
+                                              .then((value) => {
+                                                    setState(() {
+                                                      isLoading = false;
+                                                    }),
+                                                    Navigator.of(context)
+                                                        .pushReplacement(
+                                                            MaterialPageRoute(
+                                                                builder: (ctx) =>
+                                                                    Scaffold(
+                                                                        body:
+                                                                            Stack(
+                                                                      children: [
+                                                                        DrawerScreen(),
+                                                                        ProductsOverviewScreen(),
+                                                                      ],
+                                                                    ))))
+                                                  });
+                                        } else {
+                                          await Provider.of<User>(context,
+                                                  listen: false)
+                                              .updateUser(userData)
+                                              .then((value) => {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                            content: const Text(
+                                                      'Update Profile Success!',
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ))),
+                                                    setState(() {
+                                                      isLoading = false;
+                                                    })
+                                                  });
+                                        }
                                       } catch (e) {
                                         print(e);
                                       }

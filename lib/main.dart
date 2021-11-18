@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/aboutUs.dart';
 import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/providers/cart.dart';
@@ -20,14 +22,16 @@ import './providers/order.dart';
 import 'package:flutter/services.dart';
 import 'providers/addresses.dart';
 import 'providers/user.dart';
+import 'screens/about_us_screen.dart';
 import 'screens/profile_screen.dart';
 
 int? initScreen;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   SharedPreferences preferences = await SharedPreferences.getInstance();
-  initScreen = await preferences.getInt('initScreen');
+  initScreen = preferences.getInt('initScreen');
   await preferences.setInt('initScreen', 1);
 
   runApp(MyApp());
@@ -52,6 +56,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
         ),
+        ChangeNotifierProxyProvider<Auth, AboutUsInfor>(
+            create: (ctx) => AboutUsInfor(),
+            update: (_, auth, previousProducts) =>
+                previousProducts!..update(auth.token, auth.userId)),
         ChangeNotifierProxyProvider<Auth, Order>(
             create: (_) => Order(),
             update: (_, auth, previousOrder) =>
@@ -147,6 +155,7 @@ class MyApp extends StatelessWidget {
                 EditProductScreen.routeName: (ctx) => EditProductScreen(),
                 SplashScreen.routeName: (ctx) => SplashScreen(),
                 PaymentScreen.routeName: (ctx) => PaymentScreen(),
+                AboutUsScreen.routeName: (ctx) => AboutUsScreen(),
               },
             );
           },

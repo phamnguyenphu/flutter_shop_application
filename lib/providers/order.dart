@@ -1,9 +1,9 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter_shop_application/models/.env.dart';
 import 'package:flutter/foundation.dart';
 import 'cart_item.dart';
 import 'order_item.dart';
-import 'package:http/http.dart' as http;
 
 class Order with ChangeNotifier {
   List<OrderItem> _orders = [];
@@ -19,6 +19,10 @@ class Order with ChangeNotifier {
   void update(String? authToken, String? userId) {
     _authToken = authToken;
     _userId = userId;
+  }
+
+  bool get checkUser {
+    return _userId == null;
   }
 
   List<OrderItem> get orders {
@@ -44,15 +48,6 @@ class Order with ChangeNotifier {
   List<OrderItem> get listCanceled {
     return [..._listCanceled];
   }
-
-  // List<OrderItem> selectOrder(String status) {
-  //   _orders.forEach((order) {
-  //     if (order.status == status) {
-  //       listOrder.add(order);
-  //     }
-  //   });
-  //   return listOrder;
-  // }
 
   Future<void> deleteOrder(String id) async {
     final url =
@@ -104,6 +99,9 @@ class Order with ChangeNotifier {
     extractedData.forEach((orderId, orderData) {
       loadingOrder.add(OrderItem(
         id: orderId,
+        phoneNumber: orderData['phoneNumber'],
+        address: orderData['address'],
+        userName: orderData['userName'],
         status: orderData['status'],
         dateTime: DateTime.parse(orderData['dateOrder']),
         amount: orderData['amount'],
@@ -138,9 +136,10 @@ class Order with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addOrder(List<CartItem> cart, double totalAmount) async {
-    final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/orders/user-$_userId.json?auth=$_authToken');
+  Future<void> addOrder(List<CartItem> cart, double totalAmount, String name,
+      String phoneNumber, String address) async {
+    final url =
+        Uri.parse('${baseURL}orders/user-$_userId.json?auth=$_authToken');
     final time = DateTime.now();
     if (cart.isEmpty && totalAmount == 0) {
       return;
@@ -151,6 +150,9 @@ class Order with ChangeNotifier {
             'dateOrder': time.toIso8601String(),
             'amount': totalAmount,
             'status': 'Ordered',
+            'userName': name,
+            'phoneNumber': phoneNumber,
+            'address': address,
             'productsOrder': cart
                 .map((e) => {
                       'id': e.id,
@@ -168,6 +170,9 @@ class Order with ChangeNotifier {
             dateTime: time,
             amount: totalAmount,
             productsOrder: cart,
+            phoneNumber: phoneNumber,
+            address: address,
+            userName: name,
             status: 'Ordered',
           ));
       notifyListeners();

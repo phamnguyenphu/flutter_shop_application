@@ -1,9 +1,7 @@
 import 'dart:convert';
-
+import 'package:flutter_shop_application/models/.env.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:flutter_shop_application/providers/product.dart';
 
 class UserItem {
   final String id;
@@ -44,6 +42,10 @@ class User with ChangeNotifier {
         'https://firebasestorage.googleapis.com/v0/b/flutter-shop-d0a51.appspot.com/o/avatar.jpg?alt=media&token=cdb54cc3-6514-4e4f-b69b-8794450d2da3',
   );
 
+  String? get userId {
+    return _userId;
+  }
+
   UserItem get user {
     return _user;
   }
@@ -55,12 +57,13 @@ class User with ChangeNotifier {
 
   Future<void> addUser(UserItem item) async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/users/$_userId.json?auth=$_authToken');
+        '${baseURL}users/$_userId.json?auth=$_authToken');
     try {
       final response = await http.post(
         url,
         body: json.encode(
           {
+            'idUser': _userId,
             'fullName': item.fullName,
             'email': item.email,
             'birthday': item.birthday,
@@ -94,7 +97,7 @@ class User with ChangeNotifier {
 
   Future<void> updateUser(UserItem item) async {
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/users/$_userId/${item.id}.json?auth=$_authToken');
+        '${baseURL}users/$_userId/${item.id}.json?auth=$_authToken');
     try {
       final response = await http.patch(
         url,
@@ -125,7 +128,7 @@ class User with ChangeNotifier {
     UserItem? data;
     print('get');
     final url = Uri.parse(
-        'https://flutter-shop-d0a51-default-rtdb.firebaseio.com/users/$_userId.json?auth=$_authToken');
+        '${baseURL}users/$_userId.json?auth=$_authToken');
     try {
       final response = await http.get(url);
 
@@ -135,7 +138,7 @@ class User with ChangeNotifier {
         extractedData.forEach((key, value) {
           if (value['idUser'] == _userId) {
             data = UserItem(
-              id: _userId!,
+              id: key,
               idUser: _userId!,
               fullName: value['fullName'],
               email: value['email'],
@@ -147,7 +150,7 @@ class User with ChangeNotifier {
             );
           }
         });
-        // ignore: non_constant_identifier_names
+        print(data);
         _user = data!;
         notifyListeners();
       }
@@ -155,5 +158,21 @@ class User with ChangeNotifier {
       print(error);
       throw error;
     }
+  }
+
+  void logout() {
+    _user = UserItem(
+      id: '',
+      idUser: '',
+      fullName: '',
+      email: '',
+      gender: true,
+      birthday: '',
+      phoneNumber: '',
+      address: '',
+      avatar:
+          'https://firebasestorage.googleapis.com/v0/b/flutter-shop-d0a51.appspot.com/o/avatar.jpg?alt=media&token=cdb54cc3-6514-4e4f-b69b-8794450d2da3',
+    );
+    notifyListeners();
   }
 }

@@ -40,7 +40,6 @@ class _EditAddressState extends State<EditAddress> {
 
   @override
   void initState() {
-    print(widget.defaultStatus);
     _nameController.text = widget.name;
     _phoneNumberController.text = widget.phoneNumber;
     _addressController.text = widget.address;
@@ -51,7 +50,6 @@ class _EditAddressState extends State<EditAddress> {
   @override
   Future<void> didChangeDependencies() async {
     if (_isInit) {
-      Provider.of<AddressItems>(context, listen: false).deleteItem();
       await Provider.of<AddressItems>(context, listen: false).getDistrict();
     }
     _isInit = false;
@@ -71,7 +69,6 @@ class _EditAddressState extends State<EditAddress> {
             ', thành phố Hồ Chí Minh';
       });
     }
-    final user = Provider.of<User>(context).user;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -222,17 +219,26 @@ class _EditAddressState extends State<EditAddress> {
                           ),
                           Spacer(),
                           Switch(
+                              inactiveThumbColor: Colors.orange,
+                              inactiveTrackColor:
+                                  Colors.orange.withOpacity(0.4),
                               value: defaultStatus,
-                              onChanged: (val) {
-                                setState(() {
-                                  defaultStatus = !defaultStatus;
-                                });
-                              })
+                              onChanged: defaultStatus == true
+                                  ? null
+                                  : (val) {
+                                      setState(() {
+                                        defaultStatus = !defaultStatus;
+                                      });
+                                    })
                         ],
                       ),
                       SizedBox(height: 7.h),
                       Container(
-                        decoration: BoxDecoration(color: Colors.red),
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(colors: [
+                          Colors.blue.shade800,
+                          Colors.blue.withOpacity(0.7)
+                        ])),
                         width: double.infinity,
                         child: TextButton(
                             onPressed: () async {

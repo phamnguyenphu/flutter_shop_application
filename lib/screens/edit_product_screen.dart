@@ -17,7 +17,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlNode = FocusNode();
   final _form = GlobalKey<FormState>();
   var _editedProduct =
-      Product(id: 'null', title: '', description: '', price: 0, imageUrl: '');
+      Product(id: 'null', title: '', description: '', price: 0, imageUrl: '',type:'Men');
   var _isInit = true;
   bool _isLoading = false;
 
@@ -148,6 +148,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           price: _editedProduct.price,
                           imageUrl: _editedProduct.imageUrl,
                           isFavorite: _editedProduct.isFavorite,
+                          type: _editedProduct.type
                         );
                       },
                     ),
@@ -181,9 +182,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           id: _editedProduct.id,
                           title: _editedProduct.title,
                           description: _editedProduct.description,
-                          price: double.parse(value!),
+                          price: int.parse(value!),
                           imageUrl: _editedProduct.imageUrl,
                           isFavorite: _editedProduct.isFavorite,
+                          type: _editedProduct.type
                         );
                       },
                     ),
@@ -214,6 +216,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           price: _editedProduct.price,
                           imageUrl: _editedProduct.imageUrl,
                           isFavorite: _editedProduct.isFavorite,
+                          type: _editedProduct.type
                         );
                       },
                     ),
@@ -282,6 +285,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                                 price: _editedProduct.price,
                                 imageUrl: value!,
                                 isFavorite: _editedProduct.isFavorite,
+                                type: _editedProduct.type
                               );
                             },
                           ),

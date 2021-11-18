@@ -7,13 +7,18 @@ import '../providers/products.dart';
 class ProductsGrid extends StatelessWidget {
   final bool showFavs;
   final String keywords;
+  final String isType;
 
-  ProductsGrid({required this.showFavs, required this.keywords});
+  ProductsGrid(
+      {required this.showFavs, required this.keywords, required this.isType});
 
   @override
   Widget build(BuildContext context) {
     final productsData = Provider.of<Products>(context);
-    var products = showFavs ? productsData.itemsFavorites : productsData.items;
+    final productByType = isType == 'All'
+        ? productsData.items
+        : productsData.searchByType(isType);
+    var products = showFavs ? productsData.itemsFavorites : productByType;
     if (keywords.length > 0) {
       products =
           Provider.of<Products>(context).searchProducts(keywords, products);

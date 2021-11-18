@@ -19,7 +19,8 @@ class Addresses with ChangeNotifier {
   }
 
   Future<void> deleteAddress(String id) async {
-    final url = Uri.parse('${baseURL}addresses/$id.json');
+    final url = Uri.parse(
+        '${baseURL}addresses/user-$_userId/$id.json?auth=$_authToken');
     final existingAddressIndex =
         _addresses.indexWhere((element) => element.id == id);
     Address? existingAddress = _addresses[existingAddressIndex];
@@ -35,7 +36,8 @@ class Addresses with ChangeNotifier {
   }
 
   Address? findDefaultAddress() {
-    final address = _addresses.firstWhere((address) => address.status == true);
+    final address = _addresses.firstWhere((address) => address.status == true,
+        orElse: null);
     // ignore: unnecessary_null_comparison
     if (address == null) {
       return null;
@@ -44,7 +46,8 @@ class Addresses with ChangeNotifier {
   }
 
   Future<void> fetchAddresss() async {
-    final url = Uri.parse('${baseURL}addresses.json');
+    final url =
+        Uri.parse('${baseURL}addresses/user-$_userId.json?auth=$_authToken');
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -70,8 +73,13 @@ class Addresses with ChangeNotifier {
   }
 
   Future<void> updateStatus() async {
+    if (_addresses.length == 0) {
+      return null;
+    }
     final id = _addresses.firstWhere((address) => address.status == true).id;
-    final url = Uri.parse('${baseURL}addresses/$id.json');
+    print(id);
+    final url = Uri.parse(
+        '${baseURL}addresses/user-$_userId/$id.json?auth=$_authToken');
     final response = await http.patch(
       url,
       body: json.encode({'status': false}),
@@ -86,7 +94,8 @@ class Addresses with ChangeNotifier {
 
   Future<void> updateAddress(String id, Address address) async {
     final indexAddress = _addresses.indexWhere((element) => element.id == id);
-    final url = Uri.parse('${baseURL}addresses/$id.json');
+    final url = Uri.parse(
+        '${baseURL}addresses/user-$_userId/$id.json?auth=$_authToken');
     try {
       if (address.status) {
         updateStatus();
@@ -109,11 +118,11 @@ class Addresses with ChangeNotifier {
   }
 
   Future<void> addAddress(Address address) async {
-    final url = Uri.parse('${baseURL}addresses.json');
+    final url =
+        Uri.parse('${baseURL}addresses/user-$_userId.json?auth=$_authToken');
     try {
       if (address.status) {
         updateStatus();
-        notifyListeners();
       }
       final response = await http.post(url,
           body: json.encode({
@@ -123,6 +132,7 @@ class Addresses with ChangeNotifier {
             "phoneNumber": address.phoneNumber,
             "status": address.status
           }));
+      print(json.decode(response.body));
 
       if (response.statusCode == 200) {
         _addresses.insert(

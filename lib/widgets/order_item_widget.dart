@@ -199,9 +199,13 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                e.title,
-                                style: Theme.of(context).textTheme.headline3,
+                              Container(
+                                width: 45.w,
+                                child: Text(
+                                  e.title,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.headline3,
+                                ),
                               ),
                               Text(
                                 '\$${e.price}' + ' x ' + '${e.quantily}',

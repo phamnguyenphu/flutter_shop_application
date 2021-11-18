@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/screens/address/create_address.dart';
-import 'package:flutter_shop_application/screens/payment_screen.dart';
 import 'package:flutter_shop_application/widgets/address_item_widget.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:lottie/lottie.dart';
@@ -24,7 +22,8 @@ class _AddressScreenState extends State<AddressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final itemData = Provider.of<Addresses>(context).addresses;
+    final data = Provider.of<Addresses>(context);
+    final itemData = data.addresses;
     return Scaffold(
         appBar: AppBar(
           actions: [
@@ -132,8 +131,8 @@ class _AddressScreenState extends State<AddressScreen> {
                                         // ignore: deprecated_member_use
                                         FlatButton(
                                             onPressed: () {
-                                              // cart.removeItem(cart.items.keys
-                                              //     .toList()[index]);
+                                              data.deleteAddress(
+                                                  itemData[i].id);
                                               Navigator.of(context).pop(true);
                                             },
                                             child: const Text('Yes')),

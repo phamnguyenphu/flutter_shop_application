@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -161,6 +162,7 @@ class _SheetAddressState extends State<SheetAddress> {
                       ),
                 title('Address:'),
                 BuildTextField(
+                    null,
                     TextInputType.text,
                     false,
                     'Please enter detail your address!',
