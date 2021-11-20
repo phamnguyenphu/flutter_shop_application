@@ -23,10 +23,18 @@ class _DrawerScreenState extends State<DrawerScreen> {
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) async {
-      await Provider.of<User>(context, listen: false).getUser();
-      setState(() {
-        isLoading = false;
-      });
+      try{
+        await Provider.of<User>(context, listen: false).getUser();
+        setState(() {
+          isLoading = false;
+        });
+      }
+      catch(error){
+        setState(() {
+          isLoading = false;
+        });
+      }
+
     });
     super.initState();
   }
@@ -66,7 +74,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                 height: 10.0,
                               ),
                               Text(
-                                user.fullName == '' ? 'User Name' : user.fullName,
+                                user.fullName == '' ? 'Guest' : user.fullName,
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                               SizedBox(
@@ -74,7 +82,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                               ),
                               Text(
                                   user.email == ''
-                                      ? 'abc123@gmail.com'
+                                      ? 'Guest@guest.com'
                                       : user.email,
                                   style: Theme.of(context).textTheme.subtitle2),
                             ],
@@ -87,8 +95,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
                               child: Column(children: [
                                 ListTile(
                                   onTap: () {
-                                    Navigator.of(context)
-                                        .pushNamed(AuthenScreen.routeName);
+                                    Provider.of<Auth>(context,
+                                        listen: false)
+                                        .logOut();
+                                    Provider.of<User>(context,
+                                        listen: false)
+                                        .logout();
                                   },
                                   leading: Icon(Icons.lock),
                                   title: Text('Login'),
@@ -96,7 +108,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                                 ListTile(
                                   onTap: () {
                                     Navigator.of(context)
-                                        .pushNamed(AuthenScreen.routeName);
+                                        .pushNamed(AboutUsScreen.routeName);
                                   },
                                   leading: Icon(Icons.info),
                                   title: Text('About'),

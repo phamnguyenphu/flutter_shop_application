@@ -125,6 +125,30 @@ class _AuthCardState extends State<AuthCard> {
     );
   }
 
+  void _submidWithGuest() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await Provider.of<Auth>(context, listen: false)
+          .login('guest@guest.com', 'guest@guest.com')
+          .then(
+            (value) => ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text(
+                  'Login With Guest Success!',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          );
+    } catch (error) {
+      const errorMessage =
+          'Could not authenticate you. Please try again later.';
+      _showErrorDialog(errorMessage);
+    }
+  }
+
   void _submit() async {
     if (!_formKey.currentState!.validate()) {
       // Invalid!
@@ -149,12 +173,16 @@ class _AuthCardState extends State<AuthCard> {
             );
       } else {
         // Sign user up
-        await Provider.of<Auth>(context, listen: false).signup(
-            _authData['email'].toString(), _authData['password'].toString()).then((value) =>ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        await Provider.of<Auth>(context, listen: false)
+            .signup(
+                _authData['email'].toString(), _authData['password'].toString())
+            .then(
+              (value) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: const Text(
                 'Please enter some your information!',
                 style: TextStyle(color: Colors.white),
-              ))), );
+              ))),
+            );
       }
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed';
@@ -329,6 +357,22 @@ class _AuthCardState extends State<AuthCard> {
                     color: Color.fromRGBO(143, 148, 251, 1),
                   ),
                 ),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                width: double.infinity,
+                // ignore: deprecated_member_use
+                child: RaisedButton(
+                  child: Text('I AM A GUEST'),
+                  onPressed: _submidWithGuest,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
+                  textColor: Colors.white,
+                  color: Color.fromRGBO(143, 148, 251, 1),
+                ),
+              ),
               // ignore: deprecated_member_use
               FlatButton(
                 child: Text(

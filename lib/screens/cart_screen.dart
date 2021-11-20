@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/auth.dart';
+import 'package:flutter_shop_application/providers/user.dart';
 import 'package:flutter_shop_application/screens/payment_screen.dart';
 import 'package:flutter_shop_application/widgets/cart_item.dart';
 import 'package:provider/provider.dart';
@@ -170,9 +171,28 @@ class _OrderButtonState extends State<OrderButton> {
     // ignore: deprecated_member_use
     return RaisedButton(
       onPressed: () {
-        (widget.cart.totalAmount > 0 && auth == true)
+        (widget.cart.totalAmount > 0 &&
+                auth == true &&
+                Provider.of<Auth>(context, listen: false).email !=
+                    'guest@guest.com')
             ? Navigator.of(context).pushNamed(PaymentScreen.routeName)
-            : null;
+            : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: const Text(
+                  'To perform the function please login! Click ->',
+                  style: TextStyle(color: Colors.black),
+                ),
+                duration: Duration(seconds: 2),
+                backgroundColor: Color.fromRGBO(252, 207, 218, 1),
+                action: SnackBarAction(
+                  label: 'LOGIN',
+                  onPressed: () {
+                    widget.cart.clearCart();
+                    Provider.of<Auth>(context, listen: false).logOut();
+                    Provider.of<User>(context, listen: false).logout();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),

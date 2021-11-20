@@ -126,7 +126,6 @@ class User with ChangeNotifier {
 
   Future<void> getUser() async {
     UserItem? data;
-    print('get');
     final url = Uri.parse(
         '${baseURL}users/$_userId.json?auth=$_authToken');
     try {
@@ -150,7 +149,6 @@ class User with ChangeNotifier {
             );
           }
         });
-        print(data);
         _user = data!;
         notifyListeners();
       }
