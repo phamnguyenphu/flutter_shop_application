@@ -4,6 +4,7 @@ import 'package:flutter_shop_application/providers/user.dart';
 import 'package:flutter_shop_application/screens/auth_screen.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
 import 'package:flutter_shop_application/screens/profile_screen.dart';
+import 'package:flutter_shop_application/screens/setting_screen.dart';
 import 'package:flutter_shop_application/screens/user_product_screen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -113,19 +114,18 @@ class _DrawerScreenState extends State<DrawerScreen> {
                             ListTile(
                               onTap: () {
                                 Navigator.of(context)
-                                    .pushNamed(UserProductScreen.routeName);
+                                    .pushNamed(SettingScreen.routeName);
                               },
                               leading: Icon(Icons.settings),
-                              title: Text('Products'),
+                              title: Text('Languages'),
                             ),
                             ListTile(
-                              leading: Icon(Icons.info),
-                              title: Text('About us'),
-                              onTap: () {
-                                 Navigator.of(context)
-                                    .pushNamed(AboutUsScreen.routeName);
-                              }
-                            ),
+                                leading: Icon(Icons.info),
+                                title: Text('About us'),
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pushNamed(AboutUsScreen.routeName);
+                                }),
                             ListTile(
                               leading: Icon(Icons.logout),
                               title: Text('Log out'),

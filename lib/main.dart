@@ -4,6 +4,8 @@ import 'package:flutter_shop_application/providers/aboutUs.dart';
 import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/providers/cart.dart';
+import 'package:flutter_shop_application/providers/local.dart';
+import 'package:flutter_shop_application/providers/voucher.dart';
 import 'package:flutter_shop_application/screens/auth_screen.dart';
 import 'package:flutter_shop_application/screens/cart_screen.dart';
 import 'package:flutter_shop_application/screens/drawer_screen.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_shop_application/screens/edit_product_screen.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
 import 'package:flutter_shop_application/screens/payment_screen.dart';
 import 'package:flutter_shop_application/screens/products_overview_screen.dart';
+import 'package:flutter_shop_application/screens/setting_screen.dart';
 import 'package:flutter_shop_application/screens/splash/splash_screen.dart';
 import 'package:flutter_shop_application/screens/user_product_screen.dart';
 import 'package:provider/provider.dart';
@@ -49,8 +52,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => Auth(),
         ),
+        ChangeNotifierProvider(
+          create: (ctx) => Local(),
+        ),
         ChangeNotifierProxyProvider<Auth, Products>(
             create: (_) => Products(),
+            update: (_, auth, previousProducts) =>
+                previousProducts!..update(auth.token, auth.userId)),
+        ChangeNotifierProxyProvider<Auth, Voucher>(
+            create: (_) => Voucher(),
             update: (_, auth, previousProducts) =>
                 previousProducts!..update(auth.token, auth.userId)),
         ChangeNotifierProvider(
@@ -156,6 +166,7 @@ class MyApp extends StatelessWidget {
                 SplashScreen.routeName: (ctx) => SplashScreen(),
                 PaymentScreen.routeName: (ctx) => PaymentScreen(),
                 AboutUsScreen.routeName: (ctx) => AboutUsScreen(),
+                SettingScreen.routeName: (ctx) => SettingScreen(),
               },
             );
           },

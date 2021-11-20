@@ -69,7 +69,7 @@ flutter:
   - assets/images/circle.gif
   - assets/images/79.json
   - assets/images/loading_shop.json
-
+  - assets/images/giayImage.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

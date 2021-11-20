@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/common/voucherDefaulse.dart';
 import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/providers/auth.dart';
+import 'package:flutter_shop_application/providers/voucher.dart';
 import 'package:flutter_shop_application/widgets/sheet_address.dart';
 import 'package:flutter_shop_application/widgets/widget.dart';
 import 'package:flutter_svg/svg.dart';
@@ -406,7 +408,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           await Provider.of<User>(context,
                                                   listen: false)
                                               .addUser(userData)
-                                              .then((value) => {
+                                              .then((value) async => {
+                                                    await Provider.of<Voucher>(
+                                                            context,
+                                                            listen: false)
+                                                        .addVoucher(voucher10),
+                                                    await Provider.of<Voucher>(
+                                                            context,
+                                                            listen: false)
+                                                        .addVoucher(voucher20),
+                                                    await Provider.of<Voucher>(
+                                                            context,
+                                                            listen: false)
+                                                        .addVoucher(voucher05),
                                                     setState(() {
                                                       isLoading = false;
                                                     }),
