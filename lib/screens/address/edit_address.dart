@@ -51,6 +51,10 @@ class _EditAddressState extends State<EditAddress> {
   Future<void> didChangeDependencies() async {
     if (_isInit) {
       await Provider.of<AddressItems>(context, listen: false).getDistrict();
+      final address = Provider.of<AddressItems>(context, listen: false).item;
+      if (address != null) {
+        Provider.of<AddressItems>(context, listen: false).deleteItem();
+      }
     }
     _isInit = false;
     super.didChangeDependencies();

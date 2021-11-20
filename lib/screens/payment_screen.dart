@@ -51,6 +51,8 @@ class _PaymentScreenState extends State<PaymentScreen>
     defaultAddress = Provider.of<Addresses>(context).findDefaultAddress();
     final defaultVoucher = Provider.of<Voucher>(context).voucherDefaulst;
     final discountVoucher = cart.totalAmount * defaultVoucher.percent / 100;
+    final totalShipping =
+        defaultAddress!.address.contains('Thành phố Thủ Đức') ? 0 : 1;
     final totalDiscount = discountVoucher > defaultVoucher.maxDiscount
         ? defaultVoucher.maxDiscount
         : cart.totalAmount * defaultVoucher.percent / 100;
@@ -250,7 +252,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                 .subtitle2),
                                         Spacer(),
                                         Text(
-                                            '${cart.totalAmount.toStringAsFixed(2)}',
+                                            '- ${totalShipping.toStringAsFixed(2)}',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .subtitle2)
@@ -280,7 +282,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                 .headline6),
                                         Spacer(),
                                         Text(
-                                            '${(cart.totalAmount - totalDiscount).toStringAsFixed(2)}',
+                                            '${(cart.totalAmount - totalDiscount - totalShipping).toStringAsFixed(2)}',
                                             style: TextStyle(
                                                 color: Colors.red,
                                                 fontSize: 13.sp,
@@ -311,7 +313,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                         fontWeight: FontWeight.normal)),
                                 SizedBox(height: 0.5.h),
                                 Text(
-                                    '\$ ${(cart.totalAmount - totalDiscount).toStringAsFixed(2)}',
+                                    '\$ ${(cart.totalAmount - totalDiscount- totalShipping).toStringAsFixed(2)}',
                                     style: TextStyle(
                                       color: Colors.red,
                                       fontSize: 15.sp,
@@ -337,7 +339,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                               .addOrder(
                                                   cart.items.values.toList(),
                                                   cart.totalAmount -
-                                                      totalDiscount,
+                                                      totalDiscount - totalShipping,
                                                   defaultAddress!.fullName,
                                                   defaultAddress!.phoneNumber,
                                                   defaultAddress!.address)
@@ -345,7 +347,8 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                     Provider.of<Voucher>(
                                                             context,
                                                             listen: false)
-                                                        .deleteVoucher(defaultVoucher.id),
+                                                        .deleteVoucher(
+                                                            defaultVoucher.id),
                                                   });
                                           Provider.of<Voucher>(context,
                                                   listen: false)

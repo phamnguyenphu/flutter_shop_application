@@ -77,7 +77,6 @@ class Addresses with ChangeNotifier {
       return null;
     }
     final id = _addresses.firstWhere((address) => address.status == true).id;
-    print(id);
     final url = Uri.parse(
         '${baseURL}addresses/user-$_userId/$id.json?auth=$_authToken');
     final response = await http.patch(
@@ -94,10 +93,11 @@ class Addresses with ChangeNotifier {
 
   Future<void> updateAddress(String id, Address address) async {
     final indexAddress = _addresses.indexWhere((element) => element.id == id);
+    final defaultAddress = findDefaultAddress();
     final url = Uri.parse(
         '${baseURL}addresses/user-$_userId/$id.json?auth=$_authToken');
     try {
-      if (address.status) {
+      if (address.status && address.id != defaultAddress!.id) {
         updateStatus();
       }
       await http.patch(
