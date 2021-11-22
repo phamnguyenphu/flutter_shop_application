@@ -67,7 +67,7 @@ class Products with ChangeNotifier {
               imageUrl: productData['imgUrl'],
               isFavorite: favoriteData == null
                   ? false
-                  : favoriteData[productId] ?? null,
+                  : favoriteData[productId] ?? false,
               type: productData['type'],
             ),
           );

@@ -6,6 +6,7 @@ import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/providers/product.dart';
 import 'package:flutter_shop_application/providers/products.dart';
 import 'package:flutter_shop_application/screens/cart_screen.dart';
+import 'package:flutter_shop_application/screens/drawer_screen.dart';
 import 'package:flutter_shop_application/widgets/badge.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -24,9 +25,6 @@ class ProductsOverviewScreen extends StatefulWidget {
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
     with SingleTickerProviderStateMixin {
   bool _showFavoritesOnly = false;
-  bool _isDrawerOpen = false;
-  double xOffset = 0;
-  double yOffset = 0;
   bool _isInit = true;
   bool _isLoading = false;
   List<Product>? searchProducts;
@@ -69,186 +67,162 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
     Size size = MediaQuery.of(context).size;
     final auth = Provider.of<Auth>(context).isAuth;
     FocusScopeNode currentFocus = FocusScope.of(context);
-    return AnimatedContainer(
-        transform: Matrix4.translationValues(xOffset, yOffset, 0)
-          ..scale(_isDrawerOpen ? 0.9 : 1.00)
-          ..rotateZ(_isDrawerOpen ? pi / 12 : 0),
-        duration: Duration(milliseconds: 500),
-        child: Scaffold(
-          appBar: AppBar(
-            leading: GestureDetector(
-              child: Icon(Icons.menu),
-              onTap: () {
-                setState(() {
-                  if (_isDrawerOpen) {
-                    setState(() {
-                      xOffset = 0;
-                      yOffset = 0;
-                      _isDrawerOpen = false;
+    return Scaffold(
+      drawer: DrawerScreen(),
+      appBar: AppBar(
+        title: Text(
+          'My Shop',
+          style: Theme.of(context).textTheme.subtitle1,
+        ),
+        actions: [
+          AnimatedIconButton(
+            duration: Duration(milliseconds: 1000),
+            size: 25,
+            onPressed: () {
+              auth == false
+                  ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: const Text(
+                        'To perform the function please login! Click ->',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      duration: Duration(seconds: 2),
+                      backgroundColor: Color.fromRGBO(252, 207, 218, 1),
+                      action: SnackBarAction(
+                        label: 'LOGIN',
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushNamed(AuthenScreen.routeName);
+                        },
+                      ),
+                    ))
+                  : setState(() {
+                      _showFavoritesOnly = !_showFavoritesOnly;
                     });
-                  } else {
-                    setState(() {
-                      xOffset = size.width - 150;
-                      yOffset = size.height / 5;
-                      _isDrawerOpen = true;
-                    });
-                  }
-                });
-              },
-            ),
-            title: Text(
-              'My Shop',
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-            actions: [
-              AnimatedIconButton(
-                duration: Duration(milliseconds: 1000),
-                size: 25,
-                onPressed: () {
-                  auth == false
-                      ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: const Text(
-                            'To perform the function please login! Click ->',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          duration: Duration(seconds: 2),
-                          backgroundColor: Color.fromRGBO(252, 207, 218, 1),
-                          action: SnackBarAction(
-                            label: 'LOGIN',
-                            onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed(AuthenScreen.routeName);
-                            },
-                          ),
-                        ))
-                      : setState(() {
-                          _showFavoritesOnly = !_showFavoritesOnly;
-                        });
-                },
-                icons: [
-                  AnimatedIconItem(
-                      icon: Icon(Icons.list_alt, color: Colors.black)),
-                  AnimatedIconItem(
-                      icon: Icon(Icons.favorite, color: Colors.red))
-                ],
-              ),
-              Consumer<Cart>(
-                builder: (_, value, ch) => Badge(
-                  child: ch!,
-                  value: value.cartItemCount.toString(),
-                ),
-                child: IconButton(
-                  icon: Icon(Icons.shopping_cart),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(CartScreen.routeName);
-                  },
-                ),
-              )
+            },
+            icons: [
+              AnimatedIconItem(
+                  icon: Icon(Icons.list_alt, color: Colors.black)),
+              AnimatedIconItem(
+                  icon: Icon(Icons.favorite, color: Colors.red))
             ],
           ),
-          body: GestureDetector(
-              onTap: () {
-                if (!currentFocus.hasPrimaryFocus) {
-                  currentFocus.unfocus();
-                }
+          Consumer<Cart>(
+            builder: (_, value, ch) => Badge(
+              child: ch!,
+              value: value.cartItemCount.toString(),
+            ),
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
               },
-              child: Column(
-                children: [
-                  Container(
-                    height: size.height / 12,
-                    padding: const EdgeInsets.all(8),
-                    child: TextField(
-                      controller: _keysearch,
-                      onSubmitted: (val) {
-                        setState(() {
-                          _keysearch.text = val;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: "Search ?",
-                        prefixIcon: Icon(
-                          Icons.search,
-                          size: 28,
+            ),
+          )
+        ],
+      ),
+      body: GestureDetector(
+          onTap: () {
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          child: Column(
+            children: [
+              Container(
+                height: size.height / 12,
+                padding: const EdgeInsets.all(8),
+                child: TextField(
+                  controller: _keysearch,
+                  onSubmitted: (val) {
+                    setState(() {
+                      _keysearch.text = val;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: "Search ?",
+                    prefixIcon: Icon(
+                      Icons.search,
+                      size: 28,
+                    ),
+                    suffixIcon: _keysearch.text.length != 0
+                        ? IconButton(
+                            icon: Icon(Icons.close),
+                            onPressed: () {
+                              setState(() {
+                                _keysearch.text = '';
+                              });
+                            })
+                        : null,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2, color: Colors.black),
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                height: 6.h,
+                width: double.infinity,
+                child: Wrap(
+                  spacing: 10.sp,
+                  children: [
+                    InkWell(
+                        onTap: () {
+                          setState(() {
+                            _isType = "All";
+                          });
+                        },
+                        child: customChip('All', Icons.all_inclusive,
+                            Colors.purple, _isType)),
+                    InkWell(
+                        onTap: () {
+                          setState(() {
+                            _isType = "Men";
+                          });
+                        },
+                        child: customChip(
+                            'Men', Icons.male, Colors.blue, _isType)),
+                    InkWell(
+                        onTap: () {
+                          setState(() {
+                            _isType = "Women";
+                          });
+                        },
+                        child: customChip('Women', Icons.female,
+                            Colors.pink.shade300, _isType)),
+                    InkWell(
+                        onTap: () {
+                          setState(() {
+                            _isType = "Kid";
+                          });
+                        },
+                        child: customChip('Kid', Icons.child_care,
+                            Colors.green, _isType)),
+                    // IconButton(
+                    //     onPressed: () {}, icon: Icon(Icons.more_vert))
+                  ],
+                ),
+              ),
+              Expanded(
+                child: _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
                         ),
-                        suffixIcon: _keysearch.text.length != 0
-                            ? IconButton(
-                                icon: Icon(Icons.close),
-                                onPressed: () {
-                                  setState(() {
-                                    _keysearch.text = '';
-                                  });
-                                })
-                            : null,
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(width: 2, color: Colors.black),
-                          borderRadius: BorderRadius.circular(32),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () => _refreshProducts(),
+                        child: ProductsGrid(
+                          isType: _isType,
+                          showFavs: _showFavoritesOnly,
+                          keywords: _keysearch.text,
                         ),
                       ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8.0),
-                    height: 6.h,
-                    width: double.infinity,
-                    child: Wrap(
-                      spacing: 10.sp,
-                      children: [
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                _isType = "All";
-                              });
-                            },
-                            child: customChip('All', Icons.all_inclusive,
-                                Colors.purple, _isType)),
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                _isType = "Men";
-                              });
-                            },
-                            child: customChip(
-                                'Men', Icons.male, Colors.blue, _isType)),
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                _isType = "Women";
-                              });
-                            },
-                            child: customChip('Women', Icons.female,
-                                Colors.pink.shade300, _isType)),
-                        InkWell(
-                            onTap: () {
-                              setState(() {
-                                _isType = "Kid";
-                              });
-                            },
-                            child: customChip('Kid', Icons.child_care,
-                                Colors.green, _isType)),
-                        // IconButton(
-                        //     onPressed: () {}, icon: Icon(Icons.more_vert))
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: _isLoading
-                        ? Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
-                            ),
-                          )
-                        : RefreshIndicator(
-                            onRefresh: () => _refreshProducts(),
-                            child: ProductsGrid(
-                              isType: _isType,
-                              showFavs: _showFavoritesOnly,
-                              keywords: _keysearch.text,
-                            ),
-                          ),
-                  )
-                ],
-              )),
-        ));
+              )
+            ],
+          )),
+    );
   }
 
   Chip customChip(String name, IconData icon, Color color, String ischeck) {
