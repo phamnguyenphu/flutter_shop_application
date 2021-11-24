@@ -131,27 +131,13 @@ class MyApp extends StatelessWidget {
                       ? SplashScreen()
                       : auth.isAuth
                           ? auth.isSignIn
-                              ? Scaffold(
-                                  body: Stack(
-                                    children: [
-                                      DrawerScreen(),
-                                      ProductsOverviewScreen(),
-                                    ],
-                                  ),
-                                )
+                              ? ProductsOverviewScreen()
                               : ProfileScreen(
                                   email: auth.email!, isSignUp: true)
                           : AuthenScreen()
                   : auth.isAuth
                       ? auth.isSignIn
-                          ? Scaffold(
-                              body: Stack(
-                                children: [
-                                  DrawerScreen(),
-                                  ProductsOverviewScreen(),
-                                ],
-                              ),
-                            )
+                          ? ProductsOverviewScreen()
                           : ProfileScreen(email: auth.email!, isSignUp: true)
                       : AuthenScreen(),
               routes: {

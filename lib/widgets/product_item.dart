@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/auth.dart';
+import 'package:flutter_shop_application/providers/user.dart';
 import 'package:flutter_shop_application/screens/auth_screen.dart';
 import '../providers/product.dart';
 import 'package:provider/provider.dart';
@@ -50,7 +51,7 @@ class ProductItem extends StatelessWidget {
                           ? Icon(Icons.favorite, color: Colors.red)
                           : Icon(Icons.favorite_border, color: Colors.red),
                   onPressed: () {
-                    authData.isAuth == false
+                    authData.email == 'guest@guest.com'
                         ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: const Text(
                               'To perform the function please login! Click ->',
@@ -61,8 +62,10 @@ class ProductItem extends StatelessWidget {
                             action: SnackBarAction(
                               label: 'LOGIN',
                               onPressed: () {
-                                Navigator.of(context)
-                                    .pushNamed(AuthenScreen.routeName);
+                                Provider.of<Auth>(context, listen: false)
+                                    .logOut();
+                                Provider.of<User>(context, listen: false)
+                                    .logout();
                               },
                             ),
                           ))

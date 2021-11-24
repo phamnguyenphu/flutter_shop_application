@@ -19,12 +19,23 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) async {
-      await Provider.of<User>(context, listen: false).getUser();
+      try{
+        await Provider.of<User>(context, listen: false).getUser();
+        setState(() {
+          isLoading = false;
+        });
+      }
+      catch(error){
+        setState(() {
+          isLoading = false;
+        });
+      }
+
     });
     super.initState();
   }
@@ -35,60 +46,76 @@ class _DrawerScreenState extends State<DrawerScreen> {
     return isLoading
         ? Center(child: Lottie.asset('assets/images/loading_plane_paper.json'))
         : Container(
-            padding: EdgeInsets.only(top: 50.0, left: 20.0),
-            width: double.infinity,
-            color: Color.fromRGBO(252, 207, 218, 0.7),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
+            width: MediaQuery.of(context).size.width * 0.75,
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(topRight: Radius.circular(20.0), bottomRight: Radius.circular(100.0)),
+              child: Drawer(
+                child: Container(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            user.avatar == ''
-                                ? 'https://firebasestorage.googleapis.com/v0/b/flutter-shop-d0a51.appspot.com/o/avatar.jpg?alt=media&token=cdb54cc3-6514-4e4f-b69b-8794450d2da3'
-                                : user.avatar,
-                            scale: 1.0),
-                        radius: 50.0,
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Text(
-                        user.fullName == '' ? 'User Name' : user.fullName,
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      SizedBox(
-                        height: 5.0,
-                      ),
-                      Text(user.email == '' ? 'abc123@gmail.com' : user.email,
-                          style: Theme.of(context).textTheme.subtitle2),
-                    ],
-                  ),
-                ),
-                user.email == ''
-                    ? Container(
-                        margin: EdgeInsets.only(top: 40.0),
-                        child: Column(children: [
-                          ListTile(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .pushNamed(AuthenScreen.routeName);
-                            },
-                            leading: Icon(Icons.lock),
-                            title: Text('Login'),
+                      ClipRRect(
+                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20.0), bottomRight: Radius.circular(20.0)),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          width: double.infinity,
+                          color: Color.fromRGBO(143, 148, 251, 1),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    user.avatar == ''
+                                        ? 'https://firebasestorage.googleapis.com/v0/b/flutter-shop-d0a51.appspot.com/o/avatar.jpg?alt=media&token=cdb54cc3-6514-4e4f-b69b-8794450d2da3'
+                                        : user.avatar,
+                                    scale: 1.0),
+                                radius: 50.0,
+                              ),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              Text(
+                                user.fullName == '' ? 'Guest' : user.fullName,
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              Text(
+                                  user.email == ''
+                                      ? 'Guest@guest.com'
+                                      : user.email,
+                                  style: Theme.of(context).textTheme.subtitle2),
+                            ],
                           ),
-                          ListTile(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .pushNamed(AuthenScreen.routeName);
-                            },
-                            leading: Icon(Icons.info),
-                            title: Text('About'),
-                          ),
-                        ]))
-                    : Container(
+                        ),
+                      ),
+                      user.email == ''
+                          ? Container(
+                              margin: EdgeInsets.only(top: 40.0),
+                              child: Column(children: [
+                                ListTile(
+                                  onTap: () {
+                                    Provider.of<Auth>(context,
+                                        listen: false)
+                                        .logOut();
+                                    Provider.of<User>(context,
+                                        listen: false)
+                                        .logout();
+                                  },
+                                  leading: Icon(Icons.lock),
+                                  title: Text('Login'),
+                                ),
+                                ListTile(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .pushNamed(AboutUsScreen.routeName);
+                                  },
+                                  leading: Icon(Icons.info),
+                                  title: Text('About'),
+                                ),
+                              ]))
+                          : Container(
                         margin: EdgeInsets.only(top: 40.0),
                         child: Column(
                           children: [
@@ -176,10 +203,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                               },
                             ),
                           ],
-                        ),
-                      ),
-              ],
-            ),
+                                              )                 )])   ),))
           );
   }
 }
