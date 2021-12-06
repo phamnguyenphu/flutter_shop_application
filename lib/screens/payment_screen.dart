@@ -3,8 +3,10 @@ import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/providers/cart.dart';
 import 'package:flutter_shop_application/providers/order.dart';
+import 'package:flutter_shop_application/providers/voucher.dart';
 import 'package:flutter_shop_application/screens/address/address_screen.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
+import 'package:flutter_shop_application/screens/voucher_screen.dart';
 import 'package:flutter_shop_application/widgets/address_item_widget.dart';
 import 'package:flutter_shop_application/widgets/payment_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -29,7 +31,10 @@ class _PaymentScreenState extends State<PaymentScreen>
 
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((_) async {});
+    Future.delayed(Duration.zero).then((_) async {
+      await Provider.of<Voucher>(context, listen: false).fetchVouchers();
+      Provider.of<Voucher>(context, listen: false).removeDefault();
+    });
     super.initState();
     _controller = AnimationController(vsync: this);
   }
@@ -44,7 +49,13 @@ class _PaymentScreenState extends State<PaymentScreen>
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
     defaultAddress = Provider.of<Addresses>(context).findDefaultAddress();
-    // final defaultAddress = addresses.firstWhere((e) => e.status == true);
+    final defaultVoucher = Provider.of<Voucher>(context).voucherDefaulst;
+    final discountVoucher = cart.totalAmount * defaultVoucher.percent / 100;
+    final totalShipping =
+        defaultAddress!.address.contains('Thành phố Thủ Đức') ? 0 : 1;
+    final totalDiscount = discountVoucher > defaultVoucher.maxDiscount
+        ? defaultVoucher.maxDiscount
+        : cart.totalAmount * defaultVoucher.percent / 100;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -155,7 +166,10 @@ class _PaymentScreenState extends State<PaymentScreen>
                             Divider(
                                 thickness: 0.5.h, color: Colors.grey.shade200),
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (ctx) => VoucherScreen()));
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
@@ -170,7 +184,10 @@ class _PaymentScreenState extends State<PaymentScreen>
                                             .textTheme
                                             .bodyText1),
                                     Spacer(),
-                                    Text('Choose voucher',
+                                    Text(
+                                        defaultVoucher.title == null
+                                            ? 'Choose Voucher'
+                                            : defaultVoucher.title,
                                         style: Theme.of(context)
                                             .textTheme
                                             .subtitle2),
@@ -235,7 +252,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                 .subtitle2),
                                         Spacer(),
                                         Text(
-                                            '${cart.totalAmount.toStringAsFixed(2)}',
+                                            '- ${totalShipping.toStringAsFixed(2)}',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .subtitle2)
@@ -244,13 +261,13 @@ class _PaymentScreenState extends State<PaymentScreen>
                                     SizedBox(height: 0.3.h),
                                     Row(
                                       children: [
-                                        Text('Total discount vouche',
+                                        Text('Total discount voucher',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .subtitle2),
                                         Spacer(),
                                         Text(
-                                            '${cart.totalAmount.toStringAsFixed(2)}',
+                                            '- ${totalDiscount.toStringAsFixed(2)}',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .subtitle2)
@@ -265,7 +282,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                 .headline6),
                                         Spacer(),
                                         Text(
-                                            '${cart.totalAmount.toStringAsFixed(2)}',
+                                            '${(cart.totalAmount - totalDiscount - totalShipping).toStringAsFixed(2)}',
                                             style: TextStyle(
                                                 color: Colors.red,
                                                 fontSize: 13.sp,
@@ -296,7 +313,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                         fontWeight: FontWeight.normal)),
                                 SizedBox(height: 0.5.h),
                                 Text(
-                                    '\$ ${cart.totalAmount.toStringAsFixed(2)}',
+                                    '\$ ${(cart.totalAmount - totalDiscount- totalShipping).toStringAsFixed(2)}',
                                     style: TextStyle(
                                       color: Colors.red,
                                       fontSize: 15.sp,
@@ -321,10 +338,21 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                   listen: false)
                                               .addOrder(
                                                   cart.items.values.toList(),
-                                                  cart.totalAmount,
+                                                  cart.totalAmount -
+                                                      totalDiscount - totalShipping,
                                                   defaultAddress!.fullName,
                                                   defaultAddress!.phoneNumber,
-                                                  defaultAddress!.address);
+                                                  defaultAddress!.address)
+                                              .then((value) => {
+                                                    Provider.of<Voucher>(
+                                                            context,
+                                                            listen: false)
+                                                        .deleteVoucher(
+                                                            defaultVoucher.id),
+                                                  });
+                                          Provider.of<Voucher>(context,
+                                                  listen: false)
+                                              .removeDefault();
                                           setState(() {
                                             _isLoading = false;
                                           });
