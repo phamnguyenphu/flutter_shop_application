@@ -12,10 +12,12 @@ import 'package:flutter_shop_application/screens/drawer_screen.dart';
 import 'package:flutter_shop_application/screens/edit_product_screen.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
 import 'package:flutter_shop_application/screens/payment_screen.dart';
+import 'package:flutter_shop_application/screens/payment_sheet_screen.dart';
 import 'package:flutter_shop_application/screens/products_overview_screen.dart';
 import 'package:flutter_shop_application/screens/setting_screen.dart';
 import 'package:flutter_shop_application/screens/splash/splash_screen.dart';
 import 'package:flutter_shop_application/screens/user_product_screen.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -32,10 +34,12 @@ int? initScreen;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = 'pk_test_51K7c3jLZFf69SCa4UmIugNRO6W3vNQ5FXRo6EfhkWd4OOZjiIBhFID1bz1j59qv2QuJdQVf4xYwFSkXnuo6kQ2JH002Yp4txgs';
   await Firebase.initializeApp();
   SharedPreferences preferences = await SharedPreferences.getInstance();
   initScreen = preferences.getInt('initScreen');
   await preferences.setInt('initScreen', 1);
+
 
   runApp(MyApp());
   SystemChrome.setPreferredOrientations([
@@ -158,6 +162,7 @@ class MyApp extends StatelessWidget {
                 PaymentScreen.routeName: (ctx) => PaymentScreen(),
                 AboutUsScreen.routeName: (ctx) => AboutUsScreen(),
                 SettingScreen.routeName: (ctx) => SettingScreen(),
+                PaymentSheetScreen.routeName: (ctx) => PaymentSheetScreen(),
               },
             );
           },

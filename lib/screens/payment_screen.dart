@@ -6,6 +6,7 @@ import 'package:flutter_shop_application/providers/order.dart';
 import 'package:flutter_shop_application/providers/voucher.dart';
 import 'package:flutter_shop_application/screens/address/address_screen.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
+import 'package:flutter_shop_application/screens/payment_sheet_screen.dart';
 import 'package:flutter_shop_application/screens/voucher_screen.dart';
 import 'package:flutter_shop_application/widgets/address_item_widget.dart';
 import 'package:flutter_shop_application/widgets/payment_widget.dart';
@@ -356,10 +357,11 @@ class _PaymentScreenState extends State<PaymentScreen>
                                           setState(() {
                                             _isLoading = false;
                                           });
-                                          Navigator.of(context)
-                                              .pushReplacementNamed(
-                                                  OrderScreen.routeName);
-                                          cart.clearCart();
+                                          // Navigator.of(context)
+                                          //     .pushReplacementNamed(
+                                          //         OrderScreen.routeName);
+                                          // cart.clearCart();
+                                    Navigator.of(context).pushNamed(PaymentSheetScreen.routeName);
                                         },
                                   child: Text(
                                     'Order Now',

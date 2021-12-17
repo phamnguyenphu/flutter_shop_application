@@ -188,6 +188,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.0"
+  flutter_stripe:
+    dependency: "direct main"
+    description:
+      name: flutter_stripe
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -211,7 +218,7 @@ packages:
       name: freezed_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.14.2"
+    version: "0.14.3"
   http:
     dependency: "direct main"
     description:
@@ -267,7 +274,7 @@ packages:
       name: json_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.1"
+    version: "4.4.0"
   line_awesome_flutter:
     dependency: "direct main"
     description:
@@ -483,6 +490,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  stripe_android:
+    dependency: transitive
+    description:
+      name: stripe_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
+  stripe_ios:
+    dependency: transitive
+    description:
+      name: stripe_ios
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
+  stripe_platform_interface:
+    dependency: transitive
+    description:
+      name: stripe_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   term_glyph:
     dependency: transitive
     description:
