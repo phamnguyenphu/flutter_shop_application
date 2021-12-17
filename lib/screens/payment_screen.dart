@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/providers/cart.dart';
+import 'package:flutter_shop_application/providers/local.dart';
 import 'package:flutter_shop_application/providers/order.dart';
 import 'package:flutter_shop_application/providers/voucher.dart';
 import 'package:flutter_shop_application/screens/address/address_screen.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
+import 'package:flutter_shop_application/screens/paypal_screen.dart';
 import 'package:flutter_shop_application/screens/voucher_screen.dart';
 import 'package:flutter_shop_application/widgets/address_item_widget.dart';
 import 'package:flutter_shop_application/widgets/payment_widget.dart';
@@ -13,6 +15,8 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+
+import 'method_payment_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   static const routeName = "/payment";
@@ -50,6 +54,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     final cart = Provider.of<Cart>(context);
     defaultAddress = Provider.of<Addresses>(context).findDefaultAddress();
     final defaultVoucher = Provider.of<Voucher>(context).voucherDefaulst;
+    final methodPayment = Provider.of<Local>(context).methobPayment();
     final discountVoucher = cart.totalAmount * defaultVoucher.percent / 100;
     final totalShipping =
         defaultAddress!.address.contains('Thành phố Thủ Đức') ? 0 : 1;
@@ -185,6 +190,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                             .bodyText1),
                                     Spacer(),
                                     Text(
+                                        // ignore: unnecessary_null_comparison
                                         defaultVoucher.title == null
                                             ? 'Choose Voucher'
                                             : defaultVoucher.title,
@@ -199,7 +205,10 @@ class _PaymentScreenState extends State<PaymentScreen>
                             Divider(
                                 thickness: 0.5.h, color: Colors.grey.shade200),
                             InkWell(
-                              onTap: () {},
+                              onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          MethodPaymentScreen())),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
@@ -214,7 +223,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                             .textTheme
                                             .bodyText1),
                                     Spacer(),
-                                    Text('Cash',
+                                    Text(methodPayment,
                                         style: Theme.of(context)
                                             .textTheme
                                             .subtitle2),
@@ -313,7 +322,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                                         fontWeight: FontWeight.normal)),
                                 SizedBox(height: 0.5.h),
                                 Text(
-                                    '\$ ${(cart.totalAmount - totalDiscount- totalShipping).toStringAsFixed(2)}',
+                                    '\$ ${(cart.totalAmount - totalDiscount - totalShipping).toStringAsFixed(2)}',
                                     style: TextStyle(
                                       color: Colors.red,
                                       fontSize: 15.sp,
@@ -334,32 +343,44 @@ class _PaymentScreenState extends State<PaymentScreen>
                                           setState(() {
                                             _isLoading = true;
                                           });
-                                          await Provider.of<Order>(context,
-                                                  listen: false)
-                                              .addOrder(
-                                                  cart.items.values.toList(),
-                                                  cart.totalAmount -
-                                                      totalDiscount - totalShipping,
-                                                  defaultAddress!.fullName,
-                                                  defaultAddress!.phoneNumber,
-                                                  defaultAddress!.address)
-                                              .then((value) => {
-                                                    Provider.of<Voucher>(
-                                                            context,
-                                                            listen: false)
-                                                        .deleteVoucher(
-                                                            defaultVoucher.id),
-                                                  });
-                                          Provider.of<Voucher>(context,
-                                                  listen: false)
-                                              .removeDefault();
-                                          setState(() {
-                                            _isLoading = false;
-                                          });
-                                          Navigator.of(context)
-                                              .pushReplacementNamed(
-                                                  OrderScreen.routeName);
-                                          cart.clearCart();
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PaypalPayment(
+                                                        onFinish:
+                                                            (number) async {
+                                                          // payment done
+                                                          print('order id: ' +
+                                                              number);
+                                                        },
+                                                      )));
+                                          // await Provider.of<Order>(context,
+                                          //         listen: false)
+                                          //     .addOrder(
+                                          //         cart.items.values.toList(),
+                                          //         cart.totalAmount -
+                                          //             totalDiscount -
+                                          //             totalShipping,
+                                          //         defaultAddress!.fullName,
+                                          //         defaultAddress!.phoneNumber,
+                                          //         defaultAddress!.address)
+                                          //     .then((value) => {
+                                          //           Provider.of<Voucher>(
+                                          //                   context,
+                                          //                   listen: false)
+                                          //               .deleteVoucher(
+                                          //                   defaultVoucher.id),
+                                          //         });
+                                          // Provider.of<Voucher>(context,
+                                          //         listen: false)
+                                          //     .removeDefault();
+                                          // setState(() {
+                                          //   _isLoading = false;
+                                          // });
+                                          // Navigator.of(context)
+                                          //     .pushReplacementNamed(
+                                          //         OrderScreen.routeName);
+                                          // cart.clearCart();
                                         },
                                   child: Text(
                                     'Order Now',

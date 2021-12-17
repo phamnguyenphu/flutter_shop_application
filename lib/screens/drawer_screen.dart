@@ -19,21 +19,21 @@ class DrawerScreen extends StatefulWidget {
 }
 
 class _DrawerScreenState extends State<DrawerScreen> {
-  bool isLoading = true;
+  bool isLoading = false;
 
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) async {
       try{
         await Provider.of<User>(context, listen: false).getUser();
-        setState(() {
-          isLoading = false;
-        });
+        // setState(() {
+        //   isLoading = false;
+        // });
       }
       catch(error){
-        setState(() {
-          isLoading = false;
-        });
+        // setState(() {
+        //   isLoading = false;
+        // });
       }
 
     });
