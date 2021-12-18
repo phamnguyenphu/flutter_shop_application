@@ -32,6 +32,7 @@ class _PaymentScreenState extends State<PaymentScreen>
   bool _isLoading = false;
   bool _isWait = false;
   Address? defaultAddress;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -63,6 +64,7 @@ class _PaymentScreenState extends State<PaymentScreen>
         ? defaultVoucher.maxDiscount
         : cart.totalAmount * defaultVoucher.percent / 100;
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'Payment',
@@ -364,8 +366,8 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                           id: defaultVoucher.id,
                                                           totalAmount:
                                                               cart.totalAmount,
-                                                          voucher: totalDiscount
-                                                              ,
+                                                          voucher:
+                                                              totalDiscount,
                                                           name: defaultAddress!
                                                               .fullName,
                                                           phoneNumber:
@@ -382,7 +384,8 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                                   .percent,
                                                           shippingCost:
                                                               totalShipping
-                                                                  .toStringAsFixed(0),
+                                                                  .toStringAsFixed(
+                                                                      0),
                                                         )));
                                           } else {
                                             await Provider.of<Order>(context,
