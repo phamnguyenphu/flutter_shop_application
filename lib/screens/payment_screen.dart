@@ -6,7 +6,6 @@ import 'package:flutter_shop_application/providers/local.dart';
 import 'package:flutter_shop_application/providers/order.dart';
 import 'package:flutter_shop_application/providers/voucher.dart';
 import 'package:flutter_shop_application/screens/address/address_screen.dart';
-import 'package:flutter_shop_application/screens/order_screen.dart';
 import 'package:flutter_shop_application/screens/paypal_screen.dart';
 import 'package:flutter_shop_application/screens/voucher_screen.dart';
 import 'package:flutter_shop_application/widgets/address_item_widget.dart';
@@ -17,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import 'method_payment_screen.dart';
+import 'order_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   static const routeName = "/payment";
@@ -54,7 +54,8 @@ class _PaymentScreenState extends State<PaymentScreen>
     final cart = Provider.of<Cart>(context);
     defaultAddress = Provider.of<Addresses>(context).findDefaultAddress();
     final defaultVoucher = Provider.of<Voucher>(context).voucherDefaulst;
-    final methodPayment = Provider.of<Local>(context).methobPayment();
+    final local = Provider.of<Local>(context);
+    final methodPayment = local.methobPayment();
     final discountVoucher = cart.totalAmount * defaultVoucher.percent / 100;
     final totalShipping =
         defaultAddress!.address.contains('Thành phố Thủ Đức') ? 0 : 1;
@@ -340,47 +341,78 @@ class _PaymentScreenState extends State<PaymentScreen>
                                   onPressed: defaultAddress == null
                                       ? () {}
                                       : () async {
-                                          setState(() {
-                                            _isLoading = true;
-                                          });
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PaypalPayment(
-                                                        onFinish:
-                                                            (number) async {
-                                                          // payment done
-                                                          print('order id: ' +
-                                                              number);
-                                                        },
-                                                      )));
-                                          // await Provider.of<Order>(context,
-                                          //         listen: false)
-                                          //     .addOrder(
-                                          //         cart.items.values.toList(),
-                                          //         cart.totalAmount -
-                                          //             totalDiscount -
-                                          //             totalShipping,
-                                          //         defaultAddress!.fullName,
-                                          //         defaultAddress!.phoneNumber,
-                                          //         defaultAddress!.address)
-                                          //     .then((value) => {
-                                          //           Provider.of<Voucher>(
-                                          //                   context,
-                                          //                   listen: false)
-                                          //               .deleteVoucher(
-                                          //                   defaultVoucher.id),
-                                          //         });
-                                          // Provider.of<Voucher>(context,
-                                          //         listen: false)
-                                          //     .removeDefault();
-                                          // setState(() {
-                                          //   _isLoading = false;
-                                          // });
-                                          // Navigator.of(context)
-                                          //     .pushReplacementNamed(
-                                          //         OrderScreen.routeName);
-                                          // cart.clearCart();
+                                          if (local.checkSelectPayment == 0) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: const Text(
+                                                        'Please choose payment method!',
+                                                        style: TextStyle(
+                                                            color: Colors
+                                                                .white))));
+                                          } else if (local.checkSelectPayment ==
+                                              2) {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PaypalPayment(
+                                                          onFinish:
+                                                              (number) async {
+                                                            // payment done
+                                                            print('order id: ' +
+                                                                number);
+                                                          },
+                                                          id: defaultVoucher.id,
+                                                          totalAmount:
+                                                              cart.totalAmount,
+                                                          voucher: totalDiscount
+                                                              ,
+                                                          name: defaultAddress!
+                                                              .fullName,
+                                                          phoneNumber:
+                                                              defaultAddress!
+                                                                  .phoneNumber,
+                                                          address:
+                                                              defaultAddress!
+                                                                  .address,
+                                                          cart: cart
+                                                              .items.values
+                                                              .toList(),
+                                                          discount:
+                                                              defaultVoucher
+                                                                  .percent,
+                                                          shippingCost:
+                                                              totalShipping
+                                                                  .toStringAsFixed(0),
+                                                        )));
+                                          } else {
+                                            await Provider.of<Order>(context,
+                                                    listen: false)
+                                                .addOrder(
+                                                    cart.items.values.toList(),
+                                                    cart.totalAmount,
+                                                    defaultAddress!.fullName,
+                                                    defaultAddress!.phoneNumber,
+                                                    defaultAddress!.address,
+                                                    false)
+                                                .then((value) => {
+                                                      Provider.of<Voucher>(
+                                                              context,
+                                                              listen: false)
+                                                          .deleteVoucher(
+                                                              defaultVoucher
+                                                                  .id),
+                                                    });
+                                            Provider.of<Voucher>(context,
+                                                    listen: false)
+                                                .removeDefault();
+                                            setState(() {
+                                              _isLoading = false;
+                                            });
+                                            Navigator.of(context)
+                                                .pushReplacementNamed(
+                                                    OrderScreen.routeName);
+                                            cart.clearCart();
+                                          }
                                         },
                                   child: Text(
                                     'Order Now',

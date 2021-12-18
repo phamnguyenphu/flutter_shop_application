@@ -1,12 +1,40 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/providers/cart.dart';
+import 'package:flutter_shop_application/providers/cart_item.dart';
+import 'package:flutter_shop_application/providers/order.dart';
 import 'package:flutter_shop_application/providers/paypal.dart';
+import 'package:flutter_shop_application/providers/voucher.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import 'order_screen.dart';
 
 class PaypalPayment extends StatefulWidget {
   final Function onFinish;
+  final double totalAmount;
+  final num voucher;
+  final String shippingCost;
+  final int discount;
+  final String id;
+  final String name;
+  final String phoneNumber;
+  final String address;
+  final List<CartItem> cart;
 
-  PaypalPayment({required this.onFinish});
+  PaypalPayment({
+    required this.onFinish,
+    required this.totalAmount,
+    required this.voucher,
+    required this.name,
+    required this.phoneNumber,
+    required this.address,
+    required this.cart,
+    required this.id,
+    required this.shippingCost,
+    required this.discount,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -14,7 +42,8 @@ class PaypalPayment extends StatefulWidget {
   }
 }
 
-class PaypalPaymentState extends State<PaypalPayment> {
+class PaypalPaymentState extends State<PaypalPayment>
+    with TickerProviderStateMixin {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   var checkoutUrl;
   var executeUrl;
@@ -31,6 +60,8 @@ class PaypalPaymentState extends State<PaypalPayment> {
 
   bool isEnableShipping = false;
   bool isEnableAddress = false;
+  bool _isLoading = false;
+  late final AnimationController _controller;
 
   String returnURL = 'return.example.com';
   String cancelURL = 'cancel.example.com';
@@ -38,6 +69,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(vsync: this);
 
     Future.delayed(Duration.zero, () async {
       try {
@@ -71,34 +103,30 @@ class PaypalPaymentState extends State<PaypalPayment> {
     });
   }
 
-  // item name, price and quantity
-  String itemName = 'iPhone X';
-  String itemPrice = '1.99';
-  int quantity = 1;
-
   Map<String, dynamic> getOrderParams() {
-    List items = [
-      {
-        "name": itemName,
-        "quantity": quantity,
-        "price": itemPrice,
+    List items = [];
+    widget.cart.forEach((element) {
+      items.add({
+        "name": element.title,
+        "quantity": element.quantily,
+        "price": element.price.toString(),
         "currency": defaultCurrency["currency"]
-      }
-    ];
-
-    // checkout invoice details
-    String totalAmount = '1.99';
-    String subTotalAmount = '1.99';
-    String shippingCost = '0';
-    int shippingDiscountCost = 0;
-    String userFirstName = 'Gulshan';
-    String userLastName = 'Yadav';
-    String addressCity = 'Delhi';
-    String addressStreet = 'Mathura Road';
-    String addressZipCode = '110014';
-    String addressCountry = 'India';
-    String addressState = 'Delhi';
-    String addressPhoneNumber = '+919990119091';
+      });
+    });
+    String subtotalAmount = widget.totalAmount.toString();
+    String totalAmount = (int.parse(widget.totalAmount.toStringAsFixed(0)) -
+            widget.voucher -
+            int.parse(widget.shippingCost))
+        .toString();
+    String shippingCost = widget.shippingCost;
+    String shippingDiscountCost = ((-1.0) * widget.voucher).toString();
+    print(shippingDiscountCost +
+        ' ' +
+        shippingCost +
+        ' ' +
+        subtotalAmount +
+        ' ' +
+        totalAmount);
 
     Map<String, dynamic> temp = {
       "intent": "sale",
@@ -109,29 +137,13 @@ class PaypalPaymentState extends State<PaypalPayment> {
             "total": totalAmount,
             "currency": defaultCurrency["currency"],
             "details": {
-              "subtotal": subTotalAmount,
-              "shipping": shippingCost,
-              "shipping_discount": ((-1.0) * shippingDiscountCost).toString()
+              "subtotal": subtotalAmount,
+              "shipping": '-' + shippingCost,
+              "shipping_discount": shippingDiscountCost
             }
           },
           "description": "Fees for payment at the Shoe store",
-          "payment_options": {
-            "allowed_payment_method": "INSTANT_FUNDING_SOURCE"
-          },
-          "item_list": {
-            "items": items,
-            if (isEnableShipping && isEnableAddress)
-              "shipping_address": {
-                "recipient_name": userFirstName + " " + userLastName,
-                "line1": addressStreet,
-                "line2": "",
-                "city": addressCity,
-                "country_code": addressCountry,
-                "postal_code": addressZipCode,
-                "phone": addressPhoneNumber,
-                "state": addressState
-              },
-          }
+          "item_list": {"items": items}
         }
       ],
       "note_to_payer": "Contact us for any questions on your order.",
@@ -141,8 +153,15 @@ class PaypalPaymentState extends State<PaypalPayment> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print(checkoutUrl);
+    final cart = Provider.of<Cart>(context);
+    final defaultVoucher = Provider.of<Voucher>(context).voucherDefaulst;
 
     if (checkoutUrl != null) {
       return Scaffold(
@@ -153,31 +172,80 @@ class PaypalPaymentState extends State<PaypalPayment> {
             onTap: () => Navigator.pop(context),
           ),
         ),
-        body: WebView(
-          initialUrl: checkoutUrl,
-          javascriptMode: JavascriptMode.unrestricted,
-          navigationDelegate: (NavigationRequest request) {
-            if (request.url.contains(returnURL)) {
-              final uri = Uri.parse(request.url);
-              final payerID = uri.queryParameters['PayerID'];
-              if (payerID != null) {
-                services
-                    .executePayment(executeUrl, payerID, accessToken)
-                    .then((id) {
-                  widget.onFinish(id);
-                  Navigator.of(context).pop();
-                });
-              } else {
-                Navigator.of(context).pop();
-              }
-              Navigator.of(context).pop();
-            }
-            if (request.url.contains(cancelURL)) {
-              Navigator.of(context).pop();
-            }
-            return NavigationDecision.navigate;
-          },
-        ),
+        body: _isLoading
+            ? Center(
+                child: Lottie.asset(
+                'assets/images/loading_shop.json',
+                controller: _controller,
+                onLoaded: (composition) {
+                  _controller
+                    ..duration = composition.duration
+                    ..forward();
+                },
+              ))
+            : WebView(
+                initialUrl: checkoutUrl,
+                javascriptMode: JavascriptMode.unrestricted,
+                navigationDelegate: (NavigationRequest request) async {
+                  if (request.url.contains(returnURL)) {
+                    final uri = Uri.parse(request.url);
+                    final payerID = uri.queryParameters['PayerID'];
+                    if (payerID != null) {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      services
+                          .executePayment(
+                              Uri.parse(executeUrl), payerID, accessToken)
+                          .then((id) {
+                        widget.onFinish(id);
+                      });
+                      await Provider.of<Order>(context, listen: false)
+                          .addOrder(
+                              widget.cart,
+                              widget.totalAmount,
+                              widget.name,
+                              widget.phoneNumber,
+                              widget.address,
+                              true)
+                          .then((value) => {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                        content: const Text(
+                                  'Payment Success!',
+                                  style: TextStyle(color: Colors.white),
+                                ))),
+                                Provider.of<Voucher>(context, listen: false)
+                                    .deleteVoucher(defaultVoucher.id),
+                                Navigator.of(context).pop(),
+                              });
+                      setState(() {
+                        _isLoading = false;
+                      });
+
+                      Navigator.of(context)
+                          .pushReplacementNamed(OrderScreen.routeName);
+                      cart.clearCart();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: const Text(
+                        'Payment failed!',
+                        style: TextStyle(color: Colors.white),
+                      )));
+                      Navigator.of(context).pop();
+                    }
+                  }
+                  if (request.url.contains(cancelURL)) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: const Text(
+                      'Payment failed!',
+                      style: TextStyle(color: Colors.white),
+                    )));
+                    Navigator.of(context).pop();
+                  }
+                  return NavigationDecision.navigate;
+                },
+              ),
       );
     } else {
       return Scaffold(
