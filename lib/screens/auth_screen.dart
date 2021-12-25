@@ -278,7 +278,7 @@ class _AuthCardState extends State<AuthCard> {
                         textAlign: TextAlign.start,
                         decoration: InputDecoration(
                           suffixIcon: IconButton(
-                            icon: Icon(Icons.visibility),
+                            icon: Icon(!isVisibility ? Icons.visibility : Icons.visibility_off),
                             onPressed: () {
                               setState(() {
                                 isVisibility = !isVisibility;

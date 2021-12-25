@@ -5,6 +5,7 @@ import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/providers/product.dart';
 import 'package:flutter_shop_application/providers/products.dart';
+import 'package:flutter_shop_application/providers/user.dart';
 import 'package:flutter_shop_application/screens/cart_screen.dart';
 import 'package:flutter_shop_application/screens/drawer_screen.dart';
 import 'package:flutter_shop_application/widgets/badge.dart';
@@ -12,7 +13,6 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../widgets/products_grid.dart';
 import '../providers/cart.dart';
-import 'dart:math';
 
 import 'auth_screen.dart';
 
@@ -48,6 +48,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
           .fetchProducts()
           .then((_) => _isLoading = false);
       final isAuth = Provider.of<Auth>(context, listen: false).isAuth;
+      await Provider.of<User>(context, listen: false).getUser();
       await Provider.of<AboutUsInfor>(context, listen: false).fetchAboutUs();
       isAuth == true
           ? await Provider.of<Addresses>(context, listen: false).fetchAddresss()
@@ -100,10 +101,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                     });
             },
             icons: [
-              AnimatedIconItem(
-                  icon: Icon(Icons.list_alt, color: Colors.black)),
-              AnimatedIconItem(
-                  icon: Icon(Icons.favorite, color: Colors.red))
+              AnimatedIconItem(icon: Icon(Icons.list_alt, color: Colors.black)),
+              AnimatedIconItem(icon: Icon(Icons.favorite, color: Colors.red))
             ],
           ),
           Consumer<Cart>(
@@ -197,8 +196,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
                             _isType = "Kid";
                           });
                         },
-                        child: customChip('Kid', Icons.child_care,
-                            Colors.green, _isType)),
+                        child: customChip(
+                            'Kid', Icons.child_care, Colors.green, _isType)),
                     // IconButton(
                     //     onPressed: () {}, icon: Icon(Icons.more_vert))
                   ],

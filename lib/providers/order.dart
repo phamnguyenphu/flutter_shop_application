@@ -99,6 +99,7 @@ class Order with ChangeNotifier {
     extractedData.forEach((orderId, orderData) {
       loadingOrder.add(OrderItem(
         id: orderId,
+        payment: orderData['payment'],
         phoneNumber: orderData['phoneNumber'],
         address: orderData['address'],
         userName: orderData['userName'],
@@ -137,7 +138,7 @@ class Order with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cart, double totalAmount, String name,
-      String phoneNumber, String address) async {
+      String phoneNumber, String address, bool isPaymet) async {
     final url =
         Uri.parse('${baseURL}orders/user-$_userId.json?auth=$_authToken');
     final time = DateTime.now();
@@ -147,6 +148,7 @@ class Order with ChangeNotifier {
     try {
       final response = await http.post(url,
           body: json.encode({
+            'payment': isPaymet ? 'Paid' : 'Unpaid',
             'dateOrder': time.toIso8601String(),
             'amount': totalAmount,
             'status': 'Ordered',
@@ -167,6 +169,7 @@ class Order with ChangeNotifier {
           0,
           OrderItem(
             id: json.decode(response.body)['name'],
+            payment: isPaymet ? 'Paid' : 'Unpaid',
             dateTime: time,
             amount: totalAmount,
             productsOrder: cart,

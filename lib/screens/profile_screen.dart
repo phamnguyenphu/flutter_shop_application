@@ -421,6 +421,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                             context,
                                                             listen: false)
                                                         .addVoucher(voucher05),
+                                                    await Provider.of<User>(
+                                                            context,
+                                                            listen: false)
+                                                        .getUser(),
                                                     setState(() {
                                                       isLoading = false;
                                                     }),
@@ -441,7 +445,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           await Provider.of<User>(context,
                                                   listen: false)
                                               .updateUser(userData)
-                                              .then((value) => {
+                                              .then((value) async => {
                                                     ScaffoldMessenger.of(
                                                             context)
                                                         .showSnackBar(SnackBar(
@@ -450,6 +454,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       style: TextStyle(
                                                           color: Colors.white),
                                                     ))),
+                                                    await Provider.of<User>(
+                                                            context,
+                                                            listen: false)
+                                                        .getUser(),
                                                     setState(() {
                                                       isLoading = false;
                                                     })

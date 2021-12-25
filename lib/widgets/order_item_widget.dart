@@ -62,7 +62,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                   Container(
                       child: Text(widget.orderItem.status,
                           style: Theme.of(context).textTheme.subtitle2)),
-                  widget.orderItem.status == 'Ordered'
+                  widget.orderItem.status == 'Ordered' &&
+                          widget.orderItem.payment == 'Unpaid'
                       ? Container(
                           child: IconButton(
                           icon: Icon(
@@ -160,6 +161,20 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                     style: Theme.of(context).textTheme.headline3,
                   ),
                   Text('\$${widget.orderItem.amount.toStringAsFixed(2)}',
+                      style: Theme.of(context).textTheme.headline3),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Payment',
+                    style: Theme.of(context).textTheme.headline3,
+                  ),
+                  Text('${widget.orderItem.payment}',
                       style: Theme.of(context).textTheme.headline3),
                 ],
               ),
