@@ -388,6 +388,9 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                                       0),
                                                         )));
                                           } else {
+                                            setState(() {
+                                              _isLoading = true;
+                                            });
                                             await Provider.of<Order>(context,
                                                     listen: false)
                                                 .addOrder(
