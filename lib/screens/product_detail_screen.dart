@@ -38,18 +38,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: Stack(
                 children: <Widget>[
                   //image
-                  FadeInDown(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height / 2.5,
-                      child: ClipRRect(
-                        child: Image.network(
-                          loadedProduct.imageUrl,
-                          fit: BoxFit.cover,
+                    FadeInDown(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height / 2.5,
+                        child: ClipRRect(
+                          child: Image.network(
+                            loadedProduct.imageUrl,
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                  ),
                   SafeArea(
                     child: IconButton(
                         icon: Icon(
@@ -180,27 +180,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 child: Row(
                   children: <Widget>[
                     Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 0.5,
-                                blurRadius: 1,
-                                color: Colors.black.withOpacity(0.1))
-                          ],
-                          color: Colors.grey.shade100),
-                      child: loadedProduct.isFavorite
-                          ? Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            )
-                          : Icon(
-                              Icons.favorite,
-                              color: Colors.grey,
-                            )
-                    ),
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                  spreadRadius: 0.5,
+                                  blurRadius: 1,
+                                  color: Colors.black.withOpacity(0.1))
+                            ],
+                            color: Colors.grey.shade100),
+                        child: loadedProduct.isFavorite
+                            ? Icon(
+                                Icons.favorite,
+                                color: Colors.red,
+                              )
+                            : Icon(
+                                Icons.favorite,
+                                color: Colors.grey,
+                              )),
                     SizedBox(
                       width: 15,
                     ),

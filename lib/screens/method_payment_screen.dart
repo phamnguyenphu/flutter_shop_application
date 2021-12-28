@@ -16,9 +16,9 @@ class MethodPaymentScreen extends StatelessWidget {
           children: [
             MethobPaymentWidget(
                 index: 1,
-                image: 'assets/images/vnpay.png',
-                title: 'VNpay payment',
-                subtitle: 'Pay directly by VNpay payment gateway'),
+                image: 'assets/images/social.png',
+                title: 'Striple payment',
+                subtitle: 'Pay directly by Striple payment gateway'),
             MethobPaymentWidget(
                 index: 2,
                 image: 'assets/images/paypal.png',

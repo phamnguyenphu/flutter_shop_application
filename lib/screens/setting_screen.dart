@@ -16,8 +16,12 @@ class SettingScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                // ignore: unnecessary_statements
-                Navigator.of(context).pop;
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                  'You are choosen ${local.isEnglish ? 'English' : 'Vietnamese'} !',
+                  style: TextStyle(color: Colors.white),
+                )));
               },
               icon: Icon(Icons.check, color: Colors.red))
         ],
@@ -30,7 +34,7 @@ class SettingScreen extends StatelessWidget {
             },
             leading: Icon(Icons.check,
                 color: local.isEnglish ? Colors.white : Colors.red),
-            title: Text('Tiếng Việt'),
+            title: Text('VietNamese'),
           ),
           ListTile(
             onTap: () {

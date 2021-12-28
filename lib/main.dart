@@ -23,6 +23,7 @@ import './screens/product_detail_screen.dart';
 import './providers/products.dart';
 import './providers/order.dart';
 import 'package:flutter/services.dart';
+import 'helper/custom_route.dart';
 import 'providers/addresses.dart';
 import 'providers/user.dart';
 import 'screens/about_us_screen.dart';
@@ -94,6 +95,10 @@ class MyApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               title: 'MyShop',
               theme: ThemeData(
+                pageTransitionsTheme: PageTransitionsTheme(builders: {
+                  TargetPlatform.android: CustomPageTransitionBuilder(),
+                  TargetPlatform.iOS: CustomPageTransitionBuilder()
+                }),
                 canvasColor: Colors.white,
                 primarySwatch: Colors.orange,
                 // ignore: deprecated_member_use
