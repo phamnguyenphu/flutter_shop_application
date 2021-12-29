@@ -49,13 +49,13 @@ class Voucher with ChangeNotifier {
     _userId = userId;
   }
 
-  void removeDefault(){
+  void removeDefault() {
     _voucherDefault = VoucherItem(
-      id: '',
-      title: 'Choose voucher',
-      maxDiscount: 0,
-      percent: 0,
-      createAt: '');
+        id: '',
+        title: 'Choose voucher',
+        maxDiscount: 0,
+        percent: 0,
+        createAt: '');
     _indexDefault = -1;
     notifyListeners();
   }
@@ -84,15 +84,18 @@ class Voucher with ChangeNotifier {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
-        data.forEach((key, value) {
-          list.add(VoucherItem(
-            id: key,
-            title: value['title'],
-            maxDiscount: value['maxDiscount'],
-            percent: value['percent'],
-            createAt: value['createAt'],
-          ));
-        });
+        if (response.body != 'null') {
+          data.forEach((key, value) {
+            list.add(VoucherItem(
+              id: key,
+              title: value['title'],
+              maxDiscount: value['maxDiscount'],
+              percent: value['percent'],
+              createAt: value['createAt'],
+            ));
+          });
+        }
+
         _items = list;
         notifyListeners();
       }

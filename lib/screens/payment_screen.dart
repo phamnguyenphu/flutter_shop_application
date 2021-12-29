@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shop_application/helper/custom_route.dart';
 import 'package:flutter_shop_application/providers/address.dart';
 import 'package:flutter_shop_application/providers/addresses.dart';
 import 'package:flutter_shop_application/providers/cart.dart';
@@ -53,7 +54,7 @@ class _PaymentScreenState extends State<PaymentScreen>
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
-    defaultAddress = Provider.of<Addresses>(context).findDefaultAddress();
+    defaultAddress =  Provider.of<Addresses>(context).findDefaultAddress();
     final defaultVoucher = Provider.of<Voucher>(context).voucherDefaulst;
     final local = Provider.of<Local>(context);
     final methodPayment = local.methobPayment();
@@ -107,10 +108,9 @@ class _PaymentScreenState extends State<PaymentScreen>
                                         : defaultAddress!.address,
                                     handle: () {
                                       Navigator.of(context)
-                                          .push(MaterialPageRoute(
+                                          .push(CustomRoute(
                                               builder: (ctx) =>
-                                                  AddressScreen()))
-                                          .then((value) => {setState(() {})});
+                                                  AddressScreen()));
                                     })
                                 : Container(
                                     child:
