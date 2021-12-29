@@ -48,9 +48,14 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen>
           .fetchProducts()
           .then((_) => _isLoading = false);
       final isAuth = Provider.of<Auth>(context, listen: false).isAuth;
-      await Provider.of<User>(context, listen: false).getUser();
+      final email = Provider.of<Auth>(context, listen: false).email;
+      print(email);
+      email != 'guest@guest.com'
+          ? await Provider.of<User>(context, listen: false).getUser()
+          // ignore: unnecessary_statements
+          : null;
       await Provider.of<AboutUsInfor>(context, listen: false).fetchAboutUs();
-      isAuth == true
+      email != 'guest@guest.com'
           ? await Provider.of<Addresses>(context, listen: false).fetchAddresss()
           // ignore: unnecessary_statements
           : null;
