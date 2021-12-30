@@ -8,9 +8,14 @@ class Addresses with ChangeNotifier {
   List<Address> _addresses = [];
   String? _authToken;
   String? _userId;
+  Address? _defaultAddress;
 
   List<Address> get addresses {
     return [..._addresses];
+  }
+
+  Address? get defaultAddress {
+    return _defaultAddress;
   }
 
   void update(String? authToken, String? userId) {
@@ -19,6 +24,9 @@ class Addresses with ChangeNotifier {
   }
 
   Future<void> deleteAddress(String id) async {
+    bool check = false;
+    check =
+        _addresses.where((element) => element.id == id).first.status == true;
     final url = Uri.parse(
         '${baseURL}addresses/user-$_userId/$id.json?auth=$_authToken');
     final existingAddressIndex =
@@ -31,20 +39,26 @@ class Addresses with ChangeNotifier {
       _addresses.insert(existingAddressIndex, existingAddress);
       notifyListeners();
       throw Exception;
+    } else {
+      if (check) {
+        _addresses[0].status = true;
+        _defaultAddress = _addresses[0];
+        notifyListeners();
+      }
     }
     existingAddress = null;
   }
 
-  Address? findDefaultAddress() {
-    final address = _addresses.firstWhere((address) => address.status == true,
-        orElse: null);
-    // ignore: unnecessary_null_comparison
-    print(address.id);
-    if (address == null) {
-      return null;
-    }
-    return address;
-  }
+  // Address? findDefaultAddress() {
+  //   final address = _addresses.firstWhere((address) => address.status == true,
+  //       orElse: null);
+  //   // ignore: unnecessary_null_comparison
+  //   print(address.id);
+  //   if (address == null) {
+  //     return null;
+  //   }
+  //   return address;
+  // }
 
   Future<void> fetchAddresss() async {
     final url =
@@ -68,6 +82,11 @@ class Addresses with ChangeNotifier {
       });
       _addresses = loadingAddresses;
       notifyListeners();
+      if (loadingAddresses.isEmpty) {
+        return null;
+      }
+      _defaultAddress = loadingAddresses
+          .firstWhere((address) => address.status == true, orElse: null);
     } catch (e) {
       print(e);
     }
@@ -99,6 +118,8 @@ class Addresses with ChangeNotifier {
     try {
       if (address.status) {
         updateStatus();
+        _defaultAddress = address;
+        notifyListeners();
       }
       await http.patch(
         url,
@@ -123,6 +144,8 @@ class Addresses with ChangeNotifier {
     try {
       if (address.status) {
         updateStatus();
+        _defaultAddress = address;
+        notifyListeners();
       }
       final response = await http.post(url,
           body: json.encode({
