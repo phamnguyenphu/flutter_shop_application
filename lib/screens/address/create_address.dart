@@ -91,7 +91,7 @@ class _CreateAddressState extends State<CreateAddress> {
                           decoration: InputDecoration(
                             prefixIcon: Container(
                                 child: new Icon(
-                              LineAwesomeIcons.accessible_icon,
+                              LineAwesomeIcons.user_secret,
                               color: Colors.blue,
                             )),
                             border: OutlineInputBorder(

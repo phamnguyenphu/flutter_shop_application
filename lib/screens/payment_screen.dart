@@ -54,7 +54,7 @@ class _PaymentScreenState extends State<PaymentScreen>
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
-    defaultAddress =  Provider.of<Addresses>(context).findDefaultAddress();
+    defaultAddress = Provider.of<Addresses>(context).defaultAddress;
     final defaultVoucher = Provider.of<Voucher>(context).voucherDefaulst;
     final local = Provider.of<Local>(context);
     final methodPayment = local.methobPayment();
@@ -107,14 +107,18 @@ class _PaymentScreenState extends State<PaymentScreen>
                                         ? ''
                                         : defaultAddress!.address,
                                     handle: () {
-                                      Navigator.of(context)
-                                          .push(CustomRoute(
-                                              builder: (ctx) =>
-                                                  AddressScreen()));
+                                      Navigator.of(context).push(CustomRoute(
+                                          builder: (ctx) => AddressScreen()));
                                     })
-                                : Container(
-                                    child:
-                                        Center(child: Text('No Address Now!')),
+                                : InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(CustomRoute(
+                                          builder: (ctx) => AddressScreen()));
+                                    },
+                                    child: Container(
+                                      child: Center(
+                                          child: Text('No Address Now!')),
+                                    ),
                                   ),
                             Divider(
                                 thickness: 0.5.h, color: Colors.grey.shade200),
@@ -388,6 +392,9 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                                       0),
                                                         )));
                                           } else {
+                                            setState(() {
+                                              _isLoading = true;
+                                            });
                                             await Provider.of<Order>(context,
                                                     listen: false)
                                                 .addOrder(
