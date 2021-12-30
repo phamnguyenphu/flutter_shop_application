@@ -108,7 +108,7 @@ class ProductItem extends StatelessWidget {
                           icon: Icon(Icons.shopping_cart),
                           onPressed: () {
                             cart.addItem(product.id, product.price,
-                                product.title, product.imageUrl);
+                                product.title, product.imageUrl, 40);
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: const Text(

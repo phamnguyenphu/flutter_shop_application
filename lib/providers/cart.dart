@@ -20,7 +20,8 @@ class Cart with ChangeNotifier {
     return total;
   }
 
-  void addItem(String productId, int price, String title, String imgUrl) {
+  void addItem(
+      String productId, int price, String title, String imgUrl, int size) {
     if (_items.containsKey(productId)) {
       _items.update(
           productId,
@@ -30,6 +31,7 @@ class Cart with ChangeNotifier {
                 quantily: value.quantily + 1,
                 price: value.price,
                 imgUrl: value.imgUrl,
+                size: value.size,
               ));
     } else {
       _items.putIfAbsent(
@@ -40,6 +42,7 @@ class Cart with ChangeNotifier {
                 quantily: 1,
                 price: price,
                 imgUrl: imgUrl,
+                size: size,
               ));
     }
     notifyListeners();
@@ -50,7 +53,7 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateQuanlity(String productId,int quanlity){
+  void updateQuanlity(String productId, int quanlity) {
     if (!_items.containsKey(productId)) {
       return;
     }
@@ -62,7 +65,8 @@ class Cart with ChangeNotifier {
             title: value.title,
             quantily: quanlity,
             price: value.price,
-            imgUrl: value.imgUrl),
+            imgUrl: value.imgUrl,
+            size: value.size),
       );
     }
     notifyListeners();
@@ -80,7 +84,8 @@ class Cart with ChangeNotifier {
             title: value.title,
             quantily: value.quantily + 1,
             price: value.price,
-            imgUrl: value.imgUrl),
+            imgUrl: value.imgUrl,
+            size: value.size),
       );
     }
     notifyListeners();
@@ -98,7 +103,8 @@ class Cart with ChangeNotifier {
             title: value.title,
             quantily: value.quantily - 1,
             price: value.price,
-            imgUrl: value.imgUrl),
+            imgUrl: value.imgUrl,
+            size: value.size),
       );
     }
     notifyListeners();

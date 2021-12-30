@@ -4,8 +4,10 @@ class CartItem {
   final int quantily;
   final int price;
   final String imgUrl;
+  final int size;
 
   CartItem({
+    required this.size,
     required this.id,
     required this.title,
     required this.quantily,

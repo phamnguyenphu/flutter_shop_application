@@ -113,7 +113,8 @@ class Order with ChangeNotifier {
                   title: e['title'],
                   quantily: e['quantily'],
                   price: e['price'],
-                  imgUrl: e['imgUrl']),
+                  imgUrl: e['imgUrl'],
+                  size: e['size']),
             )
             .toList(),
       ));
@@ -162,6 +163,7 @@ class Order with ChangeNotifier {
                       'quantily': e.quantily,
                       'price': e.price,
                       'imgUrl': e.imgUrl,
+                      'size': e.size
                     })
                 .toList(),
           }));

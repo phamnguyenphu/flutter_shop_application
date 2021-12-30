@@ -39,6 +39,7 @@ class _PaymentScreenState extends State<PaymentScreen>
   void initState() {
     Future.delayed(Duration.zero).then((_) async {
       await Provider.of<Voucher>(context, listen: false).fetchVouchers();
+      await Provider.of<Addresses>(context, listen: false).fetchAddresss();
       Provider.of<Voucher>(context, listen: false).removeDefault();
     });
     super.initState();
