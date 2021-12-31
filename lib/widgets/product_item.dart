@@ -20,6 +20,9 @@ class ProductItem extends StatelessWidget {
             .pushNamed(ProductDetailScreen.routeName, arguments: product.id);
       },
       child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0)
+        ),
         elevation: 10.0,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

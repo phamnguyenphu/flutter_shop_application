@@ -16,6 +16,7 @@ import 'package:flutter_shop_application/screens/products_overview_screen.dart';
 import 'package:flutter_shop_application/screens/setting_screen.dart';
 import 'package:flutter_shop_application/screens/splash/splash_screen.dart';
 import 'package:flutter_shop_application/screens/user_product_screen.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -33,6 +34,7 @@ int? initScreen;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = 'pk_test_51K7c3jLZFf69SCa4UmIugNRO6W3vNQ5FXRo6EfhkWd4OOZjiIBhFID1bz1j59qv2QuJdQVf4xYwFSkXnuo6kQ2JH002Yp4txgs';
   await Firebase.initializeApp();
   SharedPreferences preferences = await SharedPreferences.getInstance();
   initScreen = preferences.getInt('initScreen');

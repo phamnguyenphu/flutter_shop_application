@@ -47,6 +47,7 @@ dependencies:
   firebase_auth: ^2.0.0
   http_auth: ^1.0.1
   webview_flutter: ^2.0.12
+  flutter_stripe: ^2.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
