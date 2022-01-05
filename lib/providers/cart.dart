@@ -3,6 +3,13 @@ import 'package:flutter_shop_application/providers/cart_item.dart';
 
 class Cart with ChangeNotifier {
   Map<String, CartItem> _items = {};
+  double _total = 0;
+
+
+  double get total {
+    return _total;
+  }
+
 
   Map<String, CartItem> get items {
     return {..._items};
@@ -108,4 +115,9 @@ class Cart with ChangeNotifier {
     _items = {};
     notifyListeners();
   }
+
+  void updateTotalPayment(double total){
+    _total = total;
+  }
+
 }

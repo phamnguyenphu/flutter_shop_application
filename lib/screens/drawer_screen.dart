@@ -4,6 +4,7 @@ import 'package:flutter_shop_application/providers/auth.dart';
 import 'package:flutter_shop_application/providers/user.dart';
 import 'package:flutter_shop_application/screens/auth_screen.dart';
 import 'package:flutter_shop_application/screens/order_screen.dart';
+import 'package:flutter_shop_application/screens/products_overview_screen.dart';
 import 'package:flutter_shop_application/screens/profile_screen.dart';
 import 'package:flutter_shop_application/screens/setting_screen.dart';
 import 'package:flutter_shop_application/screens/user_product_screen.dart';
@@ -115,6 +116,13 @@ class _DrawerScreenState extends State<DrawerScreen> {
                               margin: EdgeInsets.only(top: 40.0),
                               child: Column(
                                 children: [
+                                  ListTile(
+                                    onTap: () {
+                                      Navigator.of(context).pushReplacementNamed(ProductsOverviewScreen.routeName);
+                                    },
+                                    leading: Icon(Icons.task),
+                                    title: Text('Home'),
+                                  ),
                                   ListTile(
                                     onTap: () {
                                       Navigator.of(context).push(

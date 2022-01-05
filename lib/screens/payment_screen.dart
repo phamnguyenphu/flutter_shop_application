@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/helper/custom_route.dart';
 import 'package:flutter_shop_application/providers/address.dart';
@@ -11,16 +13,19 @@ import 'package:flutter_shop_application/screens/paypal_screen.dart';
 import 'package:flutter_shop_application/screens/voucher_screen.dart';
 import 'package:flutter_shop_application/widgets/address_item_widget.dart';
 import 'package:flutter_shop_application/widgets/payment_widget.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:http/http.dart' as http;
 
 import 'method_payment_screen.dart';
 import 'order_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   static const routeName = "/payment";
+
   const PaymentScreen({Key? key}) : super(key: key);
 
   @override
@@ -34,6 +39,7 @@ class _PaymentScreenState extends State<PaymentScreen>
   bool _isWait = false;
   Address? defaultAddress;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  Map<String, dynamic>? paymentIntentData;
 
   @override
   void initState() {
@@ -64,6 +70,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     final totalDiscount = discountVoucher > defaultVoucher.maxDiscount
         ? defaultVoucher.maxDiscount
         : cart.totalAmount * defaultVoucher.percent / 100;
+    cart.updateTotalPayment(cart.totalAmount - totalDiscount - totalShipping);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -391,6 +398,22 @@ class _PaymentScreenState extends State<PaymentScreen>
                                                                   .toStringAsFixed(
                                                                       0),
                                                         )));
+                                          } else if (local.checkSelectPayment ==
+                                              1) {
+                                            makePayment();
+                                            //makePayment();
+                                            // order.addOrder(
+                                            //           cart.items.values.toList(),
+                                            //           cart.totalAmount,
+                                            //           defaultAddress!.fullName,
+                                            //           defaultAddress!.phoneNumber,
+                                            //           defaultAddress!.address,
+                                            //           true);
+                                            //       Navigator.of(context)
+                                            //           .pushReplacementNamed(
+                                            //               OrderScreen.routeName);
+                                            //       cart.clearCart();
+
                                           } else {
                                             setState(() {
                                               _isLoading = true;
@@ -436,5 +459,101 @@ class _PaymentScreenState extends State<PaymentScreen>
                   ],
                 )),
     );
+  }
+
+  Future<void> makePayment() async {
+    final cart = Provider.of<Cart>(context, listen: false);
+    try {
+      paymentIntentData = await createPaymentIntent(
+          cart.total.toInt().toString(), 'USD'); //json.decode(response.body);
+      // print('Response body==>${response.body.toString()}');
+      await stripe.Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: stripe.SetupPaymentSheetParameters(
+              paymentIntentClientSecret: paymentIntentData!['client_secret'],
+              applePay: true,
+              googlePay: true,
+              testEnv: true,
+              style: ThemeMode.dark,
+              merchantCountryCode: 'US',
+              merchantDisplayName: 'ANNIE'));
+      // .then((value) {});
+
+      ///now finally display payment sheeet
+      displayPaymentSheet(cart);
+    } catch (e, s) {
+      print(e);
+    }
+  }
+
+  displayPaymentSheet(Cart cart) async {
+    defaultAddress =
+        Provider.of<Addresses>(context, listen: false).defaultAddress;
+    try {
+      await stripe.Stripe.instance
+          .presentPaymentSheet(
+              parameters: stripe.PresentPaymentSheetParameters(
+        clientSecret: paymentIntentData!['client_secret'],
+        confirmPayment: true,
+      ))
+          .then((newValue) async {
+        // print('payment intent' + paymentIntentData!['id'].toString());
+        // print(
+        //     'payment intent' + paymentIntentData!['client_secret'].toString());
+        // print('payment intent' + paymentIntentData!['amount'].toString());
+        // print('payment intent' + paymentIntentData.toString());
+        //orderPlaceApi(paymentIntentData!['id'].toString());
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Paid successfully")));
+        await Provider.of<Order>(context, listen: false).addOrder(
+            cart.items.values.toList(),
+            cart.totalAmount,
+            defaultAddress!.fullName,
+            defaultAddress!.phoneNumber,
+            defaultAddress!.address,
+            true);
+        Navigator.of(context).pushReplacementNamed(OrderScreen.routeName);
+        cart.clearCart();
+        paymentIntentData = null;
+      }).onError((error, stackTrace) {
+        print('Exception/DISPLAYPAYMENTSHEET==> $error $stackTrace');
+      });
+    } on stripe.StripeException catch (e) {
+      print('Exception/DISPLAYPAYMENTSHEET==> $e');
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                content: Text("Cancelled "),
+              ));
+    } catch (e) {
+      print('displaySaiiiiiiii!!!');
+    }
+  }
+
+  createPaymentIntent(String amount, String currency) async {
+    try {
+      Map<String, dynamic> body = {
+        'amount': calculateAmount(amount),
+        'currency': currency,
+        'payment_method_types[]': 'card'
+      };
+      print(body);
+      var response = await http.post(
+          Uri.parse('https://api.stripe.com/v1/payment_intents'),
+          body: body,
+          headers: {
+            'Authorization':
+                'Bearer sk_test_51K7c3jLZFf69SCa4rzCK1hj8Ld4bev3uQrbP1lcEN5n7Y1wQull8RRhA9ohxGrgmvmL74ynBLCPLGm7I3SZaUcL300ux0Yw8hL',
+            'Content-Type': 'application/x-www-form-urlencoded'
+          });
+      print('Create Intent reponse ===> ${response.body.toString()}');
+      return jsonDecode(response.body);
+    } catch (err) {
+      print('err charging user: ${err.toString()}');
+    }
+  }
+
+  calculateAmount(String amount) {
+    final a = (int.parse(amount)) * 100;
+    return a.toString();
   }
 }

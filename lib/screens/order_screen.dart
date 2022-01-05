@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shop_application/providers/order.dart';
+import 'package:flutter_shop_application/screens/drawer_screen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import '../providers/order.dart';
@@ -35,6 +36,7 @@ class _OrderScreenState extends State<OrderScreen> {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
+        drawer: DrawerScreen(),
           appBar: AppBar(
             title: Text(
               'My Order',
